@@ -45,4 +45,3 @@ const confirm = (title: string, message?: string | undefined) =>
   );
 
 export const Alert = { alert, confirm };
-export default Alert;

@@ -1,4 +1,4 @@
-export { default as Alert } from "./Alert.js";
+export * from "./Alert.js";
 export * from "./AlignedView.js";
 export * from "./CenterView.js";
 export * from "./Chip.js";
