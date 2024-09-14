@@ -1,6 +1,8 @@
 {
   "name": "@dwidge/components-rnw",
   "version": "0.0.2",
+  "description": "A collection of reusable React Native Web components.",
+  "repository": "github:dwidge/components-rnw",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/types/index.d.ts",
@@ -39,5 +41,9 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "packageManager": "pnpm@9.7.1",
+  "engines": {
+    "node": ">=20"
   }
 }
