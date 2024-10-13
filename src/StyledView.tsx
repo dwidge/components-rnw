@@ -59,4 +59,4 @@ export const StyledView = withTheme(
     <UnstyledView stylesheet={viewStyles} {...props} />
   ),
   "StyledView"
-);
+) as React.FC<Omit<StyledViewProps, "stylesheet">>;

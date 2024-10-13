@@ -25,4 +25,4 @@ export const ScreenView = withTheme(
     </SafeAreaView>
   ),
   "ScreenView"
-);
+) as React.FC<ScreenViewProps>;

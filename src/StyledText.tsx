@@ -93,4 +93,4 @@ export const StyledText = withTheme(
     <UnstyledText stylesheet={textStyles} {...props} />
   ),
   "StyledText"
-);
+) as React.FC<Omit<StyledTextProps, "stylesheet">>;

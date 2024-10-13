@@ -3,8 +3,9 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 import { Ionicons } from "@expo/vector-icons";
-import { ColorValue } from "react-native";
 import { useTheme, withTheme } from "@rneui/themed";
+import React from "react";
+import { ColorValue } from "react-native";
 
 export type IconButtonProps = {
   icon: keyof typeof Ionicons.glyphMap;
@@ -25,7 +26,7 @@ export const IconButton = withTheme(
     />
   ),
   "IconButton"
-);
+) as React.FC<IconButtonProps>;
 
 export const StyledIcon = ({
   theme = useTheme(),

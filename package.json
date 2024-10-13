@@ -2,7 +2,10 @@
   "name": "@dwidge/components-rnw",
   "version": "0.0.2",
   "description": "A collection of reusable React Native Web components.",
-  "repository": "github:dwidge/components-rnw",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dwidge/components-rnw.git"
+  },
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/types/index.d.ts",
@@ -18,8 +21,8 @@
     "src"
   ],
   "scripts": {
-    "prepare": "rimraf dist && ncp assets/ dist/ && tsc && tsc --project tsconfig.esm.json",
-    "test": "node --test"
+    "prepare": "rimraf dist && ncp assets/ dist/ && tsc -b . tsconfig.cjs.json",
+    "test": "node --test --test-name-pattern"
   },
   "peerDependencies": {
     "@backpackapp-io/react-native-toast": "^0.11.0",

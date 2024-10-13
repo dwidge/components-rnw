@@ -5,4 +5,9 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { withTheme } from "@rneui/themed";
 
-export const StyledFontAwesome = withTheme(FontAwesome, "FontAwesome");
+type StyledFontAwesomeProps = React.ComponentProps<typeof FontAwesome>;
+
+export const StyledFontAwesome = withTheme(
+  FontAwesome,
+  "FontAwesome"
+) as React.FC<StyledFontAwesomeProps>;
