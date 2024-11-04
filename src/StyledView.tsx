@@ -41,7 +41,7 @@ export const viewStyles = StyleSheet.create({
   wide: { maxWidth: 600, width: "100%" },
   selfcenter: { alignSelf: "center" },
   hidden: { height: 0 },
-  mediumSquare: { width: 120, height: 120 },
+  mediumSquare: { minWidth: 120, minHeight: 120 },
   card: {
     flex: 1,
     padding: 10,
@@ -49,6 +49,13 @@ export const viewStyles = StyleSheet.create({
     borderWidth: 0.5,
     borderRadius: 8 * 1,
     borderColor: "grey",
+  },
+  select: {
+    backgroundColor: "blue",
+    padding: 10,
+  },
+  unselect: {
+    padding: 10,
   },
 });
 
@@ -58,5 +65,5 @@ export const StyledView = withTheme(
   (props: Omit<StyledViewProps, "stylesheet">) => (
     <UnstyledView stylesheet={viewStyles} {...props} />
   ),
-  "StyledView"
+  "StyledView",
 ) as React.FC<Omit<StyledViewProps, "stylesheet">>;
