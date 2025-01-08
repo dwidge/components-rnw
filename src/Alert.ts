@@ -9,7 +9,7 @@ import { Alert as RNAlert, AlertButton, Platform } from "react-native";
 const alertPolyfill = (
   title: string,
   message?: string | undefined,
-  buttons?: AlertButton[] | undefined
+  buttons?: AlertButton[] | undefined,
 ) => {
   const result = window.confirm([title, message].filter(Boolean).join("\n"));
 
@@ -24,7 +24,7 @@ const alertPolyfill = (
 
 const alert = Platform.OS === "web" ? alertPolyfill : RNAlert.alert;
 const confirm = (title: string, message?: string | undefined) =>
-  new Promise((res) =>
+  new Promise<boolean>((res) =>
     alert(
       title,
       message,
@@ -40,8 +40,8 @@ const confirm = (title: string, message?: string | undefined) =>
           onPress: () => res(false),
         },
       ],
-      { cancelable: true }
-    )
+      { cancelable: true },
+    ),
   );
 
 export const Alert = { alert, confirm };

@@ -3,7 +3,7 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 import { toast } from "@backpackapp-io/react-native-toast";
-import { userErrorMessage } from "./userErrorMessage.js";
+import { friendlyErrorMessage } from "./userErrorMessage.js";
 import { logContextError } from "./ContextError.js";
 
 export const defaultTheme = {
@@ -14,13 +14,11 @@ export const defaultTheme = {
 };
 
 export const notifyInfo = (message: string, theme = defaultTheme) => {
-  console.log("notifyInfo1", message);
-  toast(userErrorMessage(message), { styles: { text: {} } });
+  toast(message, { styles: { text: {} } });
 };
 
 export const notifySuccess = (message: string, theme = defaultTheme) => {
-  console.log("notifySuccess1", message);
-  toast(userErrorMessage(message), {
+  toast(message, {
     styles: {
       text: { color: theme.textInvert },
       view: { backgroundColor: theme.success },
@@ -30,7 +28,7 @@ export const notifySuccess = (message: string, theme = defaultTheme) => {
 
 export const notifyError = (message: Error | string, theme = defaultTheme) => {
   logContextError(message);
-  toast(userErrorMessage(message), {
+  toast(friendlyErrorMessage(message), {
     styles: {
       text: { color: theme.textInvert },
       view: { backgroundColor: theme.error },

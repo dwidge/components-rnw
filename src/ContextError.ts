@@ -15,7 +15,7 @@ export const logContextError = (e: unknown) => {
     console.log(
       "logContextError1",
       e.message,
-      e instanceof ContextError ? e.context : undefined
+      e instanceof ContextError ? e.context : e,
     );
     if (e.cause) logContextError(e.cause);
   } else {
