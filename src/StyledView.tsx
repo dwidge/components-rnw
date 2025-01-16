@@ -36,6 +36,7 @@ export const viewStyles = StyleSheet.create({
   nhmargin: { marginHorizontal: -20 },
   spad: { padding: 10 },
   outline: { borderWidth: 1 },
+  section: { backgroundColor: "#8882" },
   minWidth: { minWidth: 150, width: "100%" },
   narrow: { maxWidth: 300, width: "100%" },
   wide: { maxWidth: 600, width: "100%" },
