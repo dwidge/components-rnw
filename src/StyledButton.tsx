@@ -2,12 +2,10 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-import React from "react";
 import { Button, ButtonProps, useTheme } from "@rneui/themed";
 import { StyledIcon } from "./IconButton.js";
 import { Ionicons } from "@expo/vector-icons";
 import { useAsync } from "@dwidge/hooks-react";
-import { notifyError } from "./notify.js";
 
 export const StyledButton = ({
   onPress,
@@ -34,7 +32,7 @@ export const StyledButton = ({
   <Button
     loading={loading || loading2}
     icon={icon && <StyledIcon icon={icon} color={iconColor} />}
-    onPress={() => onPressLoader?.().catch((e) => notifyError(e))}
+    onPress={onPressLoader}
     disabled={disabled}
     {...props}
   />

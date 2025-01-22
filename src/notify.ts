@@ -1,37 +1,47 @@
-// Copyright DWJ 2024.
-// Distributed under the Boost Software License, Version 1.0.
-// https://www.boost.org/LICENSE_1_0.txt
+import { createContext, useContext } from "react";
+import { toast, ToastOptions } from "@backpackapp-io/react-native-toast";
 
-import { toast } from "@backpackapp-io/react-native-toast";
-import { friendlyErrorMessage } from "./userErrorMessage.js";
-import { logContextError } from "./ContextError.js";
+type ToastType = "info" | "success" | "error";
 
-export const defaultTheme = {
-  success: "green",
-  error: "red",
-  text: "black",
-  textInvert: "white",
-};
+type ToastTypes = Record<ToastType, ToastOptions>;
 
-export const notifyInfo = (message: string, theme = defaultTheme) => {
-  toast(message, { styles: { text: {} } });
-};
-
-export const notifySuccess = (message: string, theme = defaultTheme) => {
-  toast(message, {
+const defaultToastTypes: ToastTypes = {
+  info: {
     styles: {
-      text: { color: theme.textInvert },
-      view: { backgroundColor: theme.success },
+      text: { color: "black" },
+      view: { backgroundColor: "white" },
     },
-  });
+  },
+  success: {
+    styles: {
+      text: { color: "white" },
+      view: { backgroundColor: "green" },
+    },
+  },
+  error: {
+    styles: {
+      text: { color: "white" },
+      view: { backgroundColor: "red" },
+    },
+  },
 };
 
-export const notifyError = (message: Error | string, theme = defaultTheme) => {
-  logContextError(message);
-  toast(friendlyErrorMessage(message), {
-    styles: {
-      text: { color: theme.textInvert },
-      view: { backgroundColor: theme.error },
-    },
-  });
+export const ToastOptionsContext = createContext<ToastTypes>(defaultToastTypes);
+
+export const useToastOptions = (toastType: ToastType): ToastOptions => {
+  const toastTypes = useContext(ToastOptionsContext);
+  return toastTypes[toastType] || toastTypes.info;
 };
+
+export const toastInfo = (message: string, options = defaultToastTypes.info) =>
+  toast(message, options);
+
+export const toastSuccess = (
+  message: string,
+  options = defaultToastTypes.success,
+) => toast(message, options);
+
+export const toastError = (
+  message: string,
+  options = defaultToastTypes.error,
+) => toast(message, options);
