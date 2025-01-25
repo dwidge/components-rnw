@@ -1,10 +1,10 @@
-import React, { useRef, useEffect, useState, useCallback } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
-  View,
-  Text,
   FlatList,
   StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from "react-native";
 import { useConsoleContext } from "./ConsoleContext";
 import { LogItem } from "./ConsoleLogItem";
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
 });
 
 export const ConsoleScreen: React.FC = () => {
-  const { logHistory, clearLogHistory } = useConsoleContext();
+  const { history, clear } = useConsoleContext();
   const flatListRef = useRef<FlatList>(null);
   const [isCloseToBottom, setIsCloseToBottom] = useState(true);
 
@@ -51,32 +51,32 @@ export const ConsoleScreen: React.FC = () => {
   );
 
   useEffect(() => {
-    if (logHistory.length > 0 && isCloseToBottom) {
+    if (history.length > 0 && isCloseToBottom) {
       flatListRef.current?.scrollToEnd({ animated: true });
     }
-  }, [logHistory, isCloseToBottom]);
+  }, [history, isCloseToBottom]);
 
   useEffect(() => {
     // Scroll to bottom on mount
-    if (logHistory.length > 0) {
+    if (history.length > 0) {
       flatListRef.current?.scrollToEnd({ animated: false });
     }
   }, []);
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.clearButton} onPress={clearLogHistory}>
+      <TouchableOpacity style={styles.clearButton} onPress={clear}>
         <Text style={styles.clearButtonText}>Clear Logs</Text>
       </TouchableOpacity>
       <FlatList
         ref={flatListRef}
-        data={logHistory}
+        data={history}
         renderItem={({ item }) => <LogItem entry={item} />} // Use the LogItem component
         keyExtractor={(item, index) => index.toString()}
         onScroll={handleScroll}
         onContentSizeChange={() => {
           // This ensures scroll to bottom if new content pushes the view out of bottom
-          if (isCloseToBottom && logHistory.length > 0) {
+          if (isCloseToBottom && history.length > 0) {
             flatListRef.current?.scrollToEnd({ animated: true });
           }
         }}

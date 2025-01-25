@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
     fontFamily: "monospace",
     fontSize: 12,
     flexShrink: 1,
+    color: "#999",
   },
   logLine: {
     flexDirection: "row",
@@ -41,6 +42,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     justifyContent: "space-between",
+    alignItems: "center",
   },
   logLineData: {
     flexDirection: "row",
@@ -50,12 +52,19 @@ const styles = StyleSheet.create({
   },
   expandableItemContainer: {
     marginLeft: 15,
-    marginTop: 2,
+    marginTop: 0,
+    marginBottom: 0,
   },
   expandableItem: {
     paddingLeft: 10,
     borderLeftWidth: 1,
     borderLeftColor: "#555",
+  },
+  details: {
+    flex: 1,
+    flexDirection: "column",
+    backgroundColor: "#8882",
+    width: "100%",
   },
   objectKey: {
     color: "#ddd",
@@ -97,71 +106,49 @@ const styles = StyleSheet.create({
   horizontalScrollView: {
     flexGrow: 0,
   },
+  summaryTouchable: {
+    flex: 1,
+    flexDirection: "row", // Ensure items are in a row
+    justifyContent: "space-between", // Keep timestamp on the right
+    alignItems: "center", // Vertically align items
+  },
+  bracket: {
+    color: "#999",
+    fontFamily: "monospace",
+    fontSize: 12,
+  },
+  stringSummary: {
+    color: "#0f0",
+  },
 });
 
-const RenderItem = ({
-  item,
-  depth = 0,
-  isExpanded,
-}: {
-  item: any;
-  depth?: number;
-  isExpanded: boolean;
-}) => {
-  const marginLeft = depth > 0 ? 15 * depth : 0;
+const truncateString = (str: string, maxLength: number): string => {
+  if (str.includes("\n")) {
+    const firstLine = str.split("\n")[0];
+    const truncated =
+      firstLine.length > maxLength
+        ? firstLine.substring(0, maxLength) + "..."
+        : firstLine + "...";
+    return truncated;
+  } else if (str.length > maxLength) {
+    const truncated = str.substring(0, maxLength) + "...";
+    return truncated;
+  }
+  return str;
+};
 
+const RenderSummaryItem: React.FC<{ item: any }> = ({ item }) => {
   if (typeof item === "object" && item !== null) {
     const isArray = Array.isArray(item);
-    const keys = isArray ? item : Object.keys(item);
-
     return (
-      <View style={{ marginLeft }} key={`object-${depth}-${Math.random()}`}>
-        <Text>
-          {isArray ? "[" : "{"}
-          {Object.keys(item).length > 0 ? "..." : isArray ? "]" : "}"}
-        </Text>
-        {isExpanded && Object.keys(item).length > 0 && (
-          <View style={styles.expandableItemContainer}>
-            <ScrollView horizontal={true} style={styles.horizontalScrollView}>
-              <View style={styles.expandableItem}>
-                {keys.map((key, index) => (
-                  <View
-                    style={styles.logLine}
-                    key={`${isArray ? "index" : "key"}-${depth}-${index}`}
-                  >
-                    <Text
-                      style={isArray ? styles.arrayIndex : styles.objectKey}
-                    >
-                      {isArray ? index : key}
-                    </Text>
-                    <Text>: </Text>
-                    <RenderItem
-                      item={isArray ? item[index] : item[key]}
-                      depth={depth + 1}
-                      isExpanded={isExpanded}
-                    />
-                  </View>
-                ))}
-                {Object.keys(item).length === 0 && isArray && (
-                  <Text>{"]"}</Text>
-                )}
-                {Object.keys(item).length === 0 && !isArray && (
-                  <Text>{"}"}</Text>
-                )}
-              </View>
-            </ScrollView>
-          </View>
-        )}
-        {isExpanded && Object.keys(item).length === 0 && isArray && (
-          <Text>{"]"}</Text>
-        )}
-        {isExpanded && Object.keys(item).length === 0 && !isArray && (
-          <Text>{"}"}</Text>
-        )}
-      </View>
+      <Text style={styles.bracket}>
+        {isArray ? "[" : "{"}
+        {Object.keys(item).length > 0 ? "..." : ""}
+        {isArray ? "]" : "}"}
+      </Text>
     );
   } else if (typeof item === "string") {
-    return <Text style={styles.string}>{JSON.stringify(item)}</Text>;
+    return <Text style={styles.stringSummary}>{truncateString(item, 50)}</Text>;
   } else if (typeof item === "number") {
     return <Text style={styles.number}>{item}</Text>;
   } else if (typeof item === "boolean") {
@@ -179,6 +166,50 @@ const RenderItem = ({
   }
 };
 
+const RenderDetailsItem: React.FC<{ item: any }> = ({ item }) => {
+  if (typeof item === "object" && item !== null) {
+    const isArray = Array.isArray(item);
+    const keys = isArray ? item : Object.keys(item);
+    const hasKeys = Object.keys(item).length > 0;
+
+    return (
+      <View key={`details-${Math.random()}`}>
+        <Text style={styles.bracket}>{isArray ? "[" : "{"}</Text>
+        {hasKeys && (
+          <View style={styles.expandableItemContainer}>
+            <ScrollView horizontal={true} style={styles.horizontalScrollView}>
+              <View style={styles.expandableItem}>
+                {keys.map((key, index) => (
+                  <View
+                    style={styles.logLine}
+                    key={`${isArray ? "index" : "key"}-${index}`}
+                  >
+                    <Text
+                      style={isArray ? styles.arrayIndex : styles.objectKey}
+                    >
+                      {isArray ? index : key}
+                    </Text>
+                    <Text>: </Text>
+                    <RenderDetailsItem
+                      item={isArray ? item[index] : item[key]}
+                    />
+                  </View>
+                ))}
+              </View>
+            </ScrollView>
+          </View>
+        )}
+        <Text style={styles.bracket}>{isArray ? "]" : "}"}</Text>
+      </View>
+    );
+  } else if (typeof item === "string") {
+    // Details show full string
+    return <Text style={styles.string}>{JSON.stringify(item)}</Text>;
+  } else {
+    return <RenderSummaryItem item={item} />;
+  }
+};
+
 export const LogItem: React.FC<LogItemProps> = ({ entry }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -188,24 +219,36 @@ export const LogItem: React.FC<LogItemProps> = ({ entry }) => {
 
   return (
     <View style={styles.logItemContainer}>
-      <TouchableOpacity style={styles.logLineMain} onPress={toggleExpand}>
-        <View style={styles.logLineData}>
-          <Text style={[styles.logPrefix, styles[entry.level]]}>
-            {entry.level.toUpperCase()}:
+      <View style={styles.logLineMain}>
+        <TouchableOpacity
+          style={styles.summaryTouchable}
+          onPress={toggleExpand}
+        >
+          <View style={styles.logLineData}>
+            <Text style={[styles.logPrefix, styles[entry.level]]}>
+              {entry.level.toUpperCase()}:
+            </Text>
+            {entry.data.map((item, index) => (
+              <React.Fragment key={index}>
+                <RenderSummaryItem item={item} />
+                {index < entry.data.length - 1 && (
+                  <Text style={styles.logText}> </Text>
+                )}
+              </React.Fragment>
+            ))}
+          </View>
+          <Text style={styles.timestamp}>
+            {entry.timestamp.toLocaleTimeString()}
           </Text>
+        </TouchableOpacity>
+      </View>
+      {isExpanded && (
+        <View style={styles.details}>
           {entry.data.map((item, index) => (
-            <React.Fragment key={index}>
-              <RenderItem item={item} depth={0} isExpanded={isExpanded} />
-              {index < entry.data.length - 1 && (
-                <Text style={styles.logText}> </Text>
-              )}
-            </React.Fragment>
+            <RenderDetailsItem key={`expanded-item-${index}`} item={item} />
           ))}
         </View>
-        <Text style={styles.timestamp}>
-          {entry.timestamp.toLocaleTimeString()}
-        </Text>
-      </TouchableOpacity>
+      )}
     </View>
   );
 };

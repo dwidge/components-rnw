@@ -1,95 +1,107 @@
 import React, {
   createContext,
-  useState,
-  useEffect,
+  ReactNode,
   useCallback,
   useContext,
-  useRef,
+  useState,
 } from "react";
-
-// ... (rest of the imports)
+import { useMethodOverrideWithChain } from "./useMethodOverrideWithChain";
 
 interface LogEntry {
-  level: "log" | "warn" | "error";
+  level: "log" | "warn" | "error" | "assert";
   data: any[];
   timestamp: Date;
+}
+
+interface ConsoleObject extends Record<string, any> {
+  log: (...data: any[]) => void;
+  warn: (...data: any[]) => void;
+  error: (...data: any[]) => void;
+  assert: (condition: boolean, ...data: any[]) => void;
+}
+
+interface ConsoleContextValue extends ConsoleObject {
+  history: LogEntry[];
+  clear: () => void;
 }
 
 interface ConsoleContextProps {
   children: React.ReactNode;
 }
 
-interface ConsoleContextValue {
-  logHistory: LogEntry[];
-  clearLogHistory: () => void;
-}
-
 const ConsoleContext = createContext<ConsoleContextValue | undefined>(
   undefined,
 );
 
-const originalConsoleLog = console.log;
-const originalConsoleWarn = console.warn;
-const originalConsoleError = console.error;
+const serializeData = (data: any[]) =>
+  data.map((item) =>
+    item instanceof Error
+      ? {
+          message: item.message,
+          name: item.name,
+          stack: item.stack,
+        }
+      : item,
+  );
 
 export const ConsoleProvider: React.FC<ConsoleContextProps> = ({
   children,
 }) => {
-  const [logHistory, setLogHistory] = useState<LogEntry[]>([]);
-  const isCapturingRef = useRef(false);
+  const [history, setHistory] = useState<LogEntry[]>([]);
 
-  const clearLogHistory = useCallback(() => {
-    setLogHistory([]);
+  const clear = useCallback(() => {
+    setHistory([]);
   }, []);
 
-  const captureLog = useCallback(
-    (level: "log" | "warn" | "error", args: any[]) => {
-      setLogHistory((prev) => [
-        ...prev,
-        { level, data: args, timestamp: new Date() },
-      ]);
+  const addLogEntry = useCallback(
+    (level: LogEntry["level"], data: any[]) => {
+      Promise.resolve().then(() => {
+        setHistory((prev) => [
+          ...prev,
+          { level, data: serializeData(data), timestamp: new Date() },
+        ]);
+      });
     },
-    [],
+    [setHistory],
   );
 
-  const enableCapture = useCallback(() => {
-    if (isCapturingRef.current) return;
-    isCapturingRef.current = true;
+  const log = useCallback(
+    (...data: any[]) => {
+      addLogEntry("log", data);
+    },
+    [addLogEntry],
+  );
 
-    console.log = (...args: any[]) => {
-      captureLog("log", args);
-      originalConsoleLog(...args);
-    };
+  const warn = useCallback(
+    (...data: any[]) => {
+      addLogEntry("warn", data);
+    },
+    [addLogEntry],
+  );
 
-    console.warn = (...args: any[]) => {
-      captureLog("warn", args);
-      originalConsoleWarn(...args);
-    };
+  const error = useCallback(
+    (...data: any[]) => {
+      addLogEntry("error", data);
+    },
+    [addLogEntry],
+  );
 
-    console.error = (...args: any[]) => {
-      captureLog("error", args);
-      originalConsoleError(...args);
-    };
-  }, [captureLog]);
-
-  const disableCapture = useCallback(() => {
-    if (!isCapturingRef.current) return;
-    isCapturingRef.current = false;
-    console.log = originalConsoleLog;
-    console.warn = originalConsoleWarn;
-    console.error = originalConsoleError;
-  }, []);
-
-  useEffect(() => {
-    enableCapture();
-    return () => {
-      disableCapture();
-    };
-  }, [enableCapture, disableCapture]);
+  const assert = useCallback(
+    (condition: boolean, ...data: any[]) => {
+      if (!condition) {
+        addLogEntry("assert", data);
+      }
+    },
+    [addLogEntry],
+  );
 
   const value: ConsoleContextValue = {
-    logHistory,
-    clearLogHistory,
+    history,
+    clear,
+    log,
+    warn,
+    error,
+    assert,
   };
 
   return (
@@ -103,4 +115,31 @@ export const useConsoleContext = () => {
     throw new Error("useConsoleContext must be used within a ConsoleProvider");
   }
   return context;
+};
+
+interface OverrideConsoleProviderProps extends ConsoleContextProps {}
+
+const OverrideConsoleInner: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const { log, warn, error, assert } = useConsoleContext();
+
+  useMethodOverrideWithChain(console as ConsoleObject, {
+    log,
+    warn,
+    error,
+    assert,
+  });
+
+  return <>{children}</>;
+};
+
+export const OverrideConsoleProvider: React.FC<
+  OverrideConsoleProviderProps
+> = ({ children }) => {
+  return (
+    <ConsoleProvider>
+      <OverrideConsoleInner>{children}</OverrideConsoleInner>
+    </ConsoleProvider>
+  );
 };
