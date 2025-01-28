@@ -1,11 +1,5 @@
 import React, { useState, useCallback } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 interface LogItemProps {
   entry: {
@@ -17,19 +11,12 @@ interface LogItemProps {
 
 const styles = StyleSheet.create({
   logItemContainer: {
-    marginBottom: 5,
     flexDirection: "column",
     alignItems: "flex-start",
     width: "100%",
   },
-  logPrefix: {
-    fontFamily: "monospace",
-    fontSize: 12,
-    marginRight: 5,
-  },
+  logPrefix: {},
   logText: {
-    fontFamily: "monospace",
-    fontSize: 12,
     flexShrink: 1,
     color: "#999",
   },
@@ -46,15 +33,11 @@ const styles = StyleSheet.create({
   },
   logLineData: {
     flexDirection: "row",
-    alignItems: "flex-start",
     flexWrap: "wrap",
     flexShrink: 1,
+    gap: 5,
   },
-  expandableItemContainer: {
-    marginLeft: 15,
-    marginTop: 0,
-    marginBottom: 0,
-  },
+  expandableItemContainer: {},
   expandableItem: {
     paddingLeft: 10,
     borderLeftWidth: 1,
@@ -74,6 +57,8 @@ const styles = StyleSheet.create({
   },
   string: {
     color: "#0f0",
+    flexWrap: "wrap",
+    width: "90%",
   },
   number: {
     color: "#0ff",
@@ -101,7 +86,6 @@ const styles = StyleSheet.create({
   },
   timestamp: {
     color: "#777",
-    fontSize: 10,
   },
   horizontalScrollView: {
     flexGrow: 0,
@@ -114,8 +98,6 @@ const styles = StyleSheet.create({
   },
   bracket: {
     color: "#999",
-    fontFamily: "monospace",
-    fontSize: 12,
   },
   stringSummary: {
     color: "#0f0",
@@ -177,26 +159,20 @@ const RenderDetailsItem: React.FC<{ item: any }> = ({ item }) => {
         <Text style={styles.bracket}>{isArray ? "[" : "{"}</Text>
         {hasKeys && (
           <View style={styles.expandableItemContainer}>
-            <ScrollView horizontal={true} style={styles.horizontalScrollView}>
-              <View style={styles.expandableItem}>
-                {keys.map((key, index) => (
-                  <View
-                    style={styles.logLine}
-                    key={`${isArray ? "index" : "key"}-${index}`}
-                  >
-                    <Text
-                      style={isArray ? styles.arrayIndex : styles.objectKey}
-                    >
-                      {isArray ? index : key}
-                    </Text>
-                    <Text>: </Text>
-                    <RenderDetailsItem
-                      item={isArray ? item[index] : item[key]}
-                    />
-                  </View>
-                ))}
-              </View>
-            </ScrollView>
+            <View style={styles.expandableItem}>
+              {keys.map((key, index) => (
+                <View
+                  style={styles.logLine}
+                  key={`${isArray ? "index" : "key"}-${index}`}
+                >
+                  <Text style={isArray ? styles.arrayIndex : styles.objectKey}>
+                    {isArray ? index : key}
+                  </Text>
+                  <Text>: </Text>
+                  <RenderDetailsItem item={isArray ? item[index] : item[key]} />
+                </View>
+              ))}
+            </View>
           </View>
         )}
         <Text style={styles.bracket}>{isArray ? "]" : "}"}</Text>
@@ -226,15 +202,10 @@ export const LogItem: React.FC<LogItemProps> = ({ entry }) => {
         >
           <View style={styles.logLineData}>
             <Text style={[styles.logPrefix, styles[entry.level]]}>
-              {entry.level.toUpperCase()}:
+              {entry.level.toUpperCase()}
             </Text>
             {entry.data.map((item, index) => (
-              <React.Fragment key={index}>
-                <RenderSummaryItem item={item} />
-                {index < entry.data.length - 1 && (
-                  <Text style={styles.logText}> </Text>
-                )}
-              </React.Fragment>
+              <RenderSummaryItem key={index} item={item} />
             ))}
           </View>
           <Text style={styles.timestamp}>
