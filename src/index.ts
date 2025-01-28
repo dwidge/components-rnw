@@ -19,6 +19,7 @@ export * from "./Row.js";
 export * from "./ScreenView.js";
 export * from "./ScrollView.js";
 export * from "./Spacer.js";
+export * from "./StyledAccordion.js";
 export * from "./StyledButton.js";
 export * from "./StyledFontAwesome.js";
 export * from "./StyledGrid.js";
@@ -33,3 +34,4 @@ export * from "./UnstyledText.js";
 export * from "./UnstyledView.js";
 export * from "./useColorScheme.js";
 export * from "./userErrorMessage.js";
+
