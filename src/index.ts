@@ -7,6 +7,7 @@ export * from "./ConsoleContext.js";
 export * from "./ConsoleScreen.js";
 export * from "./ContextError.js";
 export * from "./Error.js";
+export * from "./EventErrorHandler.js";
 export * from "./Gap.js";
 export * from "./IconButton.js";
 export * from "./ImageThumbs.js";
