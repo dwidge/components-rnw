@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   FlatList,
   StyleSheet,
@@ -31,37 +31,13 @@ const styles = StyleSheet.create({
 export const ConsoleScreen: React.FC = () => {
   const { history, clear } = useConsoleContext();
   const flatListRef = useRef<FlatList>(null);
-  const [isCloseToBottom, setIsCloseToBottom] = useState(true);
-
-  const handleScroll = useCallback(
-    ({
-      nativeEvent,
-    }: {
-      nativeEvent: {
-        contentOffset: { y: number };
-        contentSize: { height: number };
-        layoutMeasurement: { height: number };
-      };
-    }) => {
-      const { contentOffset, contentSize, layoutMeasurement } = nativeEvent;
-      const bottomOffset = contentSize.height - layoutMeasurement.height;
-      setIsCloseToBottom(contentOffset.y >= bottomOffset - 20); // Adjust threshold as needed
-    },
-    [],
-  );
 
   useEffect(() => {
-    if (history.length > 0 && isCloseToBottom) {
+    // Delay scrollToEnd slightly to allow layout to settle on web
+    requestAnimationFrame(() => {
       flatListRef.current?.scrollToEnd({ animated: true });
-    }
-  }, [history, isCloseToBottom]);
-
-  useEffect(() => {
-    // Scroll to bottom on mount
-    if (history.length > 0) {
-      flatListRef.current?.scrollToEnd({ animated: false });
-    }
-  }, []);
+    });
+  }, [history]);
 
   return (
     <View style={styles.container}>
@@ -71,15 +47,8 @@ export const ConsoleScreen: React.FC = () => {
       <FlatList
         ref={flatListRef}
         data={history}
-        renderItem={({ item }) => <LogItem entry={item} />} // Use the LogItem component
+        renderItem={({ item }) => <LogItem entry={item} />}
         keyExtractor={(item, index) => index.toString()}
-        onScroll={handleScroll}
-        onContentSizeChange={() => {
-          // This ensures scroll to bottom if new content pushes the view out of bottom
-          if (isCloseToBottom && history.length > 0) {
-            flatListRef.current?.scrollToEnd({ animated: true });
-          }
-        }}
       />
     </View>
   );
