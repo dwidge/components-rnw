@@ -5,7 +5,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme, withTheme } from "@rneui/themed";
 import React from "react";
-import { ColorValue } from "react-native";
+import {
+  ColorValue,
+  StyleProp,
+  TouchableOpacity,
+  ViewStyle,
+} from "react-native";
 
 export type IconButtonProps = {
   icon: keyof typeof Ionicons.glyphMap;
@@ -13,19 +18,21 @@ export type IconButtonProps = {
   size?: number;
   color?: ColorValue;
   disabledColor?: ColorValue;
+  style?: StyleProp<ViewStyle>;
 };
 
 export const IconButton = withTheme(
-  ({ icon, onPress, color, disabledColor }: IconButtonProps) => (
-    <Ionicons
-      name={icon}
-      size={24}
-      color={onPress ? color : disabledColor}
-      style={{ padding: 10 }}
-      onPress={onPress}
-    />
+  ({ icon, onPress, color, disabledColor, style }: IconButtonProps) => (
+    <TouchableOpacity onPress={onPress} style={style}>
+      <Ionicons
+        name={icon}
+        size={24}
+        color={onPress ? color : disabledColor}
+        style={{ padding: 10 }}
+      />
+    </TouchableOpacity>
   ),
-  "IconButton"
+  "IconButton",
 ) as React.FC<IconButtonProps>;
 
 export const StyledIcon = ({
