@@ -142,9 +142,18 @@ const RenderSummaryItem: React.FC<{ item: any }> = ({ item }) => {
   } else if (typeof item === "function") {
     return <Text style={styles.function}>[Function]</Text>;
   } else if (item instanceof Error) {
-    return <Text style={styles.error}>{String(item)}</Text>;
+    return <Text style={styles.error}>{toStringSafe(item)}</Text>;
   } else {
-    return <Text style={styles.logText}>{String(item)}</Text>;
+    return <Text style={styles.logText}>{toStringSafe(item)}</Text>;
+  }
+};
+
+const toStringSafe = (v: any) => {
+  try {
+    if (v instanceof Error) return v.message;
+    return `${v}`;
+  } catch (e) {
+    return "toStringSafeE1: " + (e instanceof Error ? e.message : `${e}`);
   }
 };
 
@@ -186,6 +195,14 @@ const RenderDetailsItem: React.FC<{ item: any }> = ({ item }) => {
   }
 };
 
+const TryRenderDetailsItem: React.FC<{ item: any }> = ({ item }) => {
+  try {
+    return <RenderDetailsItem item={item} />;
+  } catch (e) {
+    return <Text>TryRenderDetailsItemE1: {toStringSafe(e)}</Text>;
+  }
+};
+
 export const LogItem: React.FC<LogItemProps> = ({ entry }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -216,7 +233,7 @@ export const LogItem: React.FC<LogItemProps> = ({ entry }) => {
       {isExpanded && (
         <View style={styles.details}>
           {entry.data.map((item, index) => (
-            <RenderDetailsItem key={`expanded-item-${index}`} item={item} />
+            <TryRenderDetailsItem key={`expanded-item-${index}`} item={item} />
           ))}
         </View>
       )}
