@@ -41,6 +41,7 @@ export const StyledStringPicker = <T extends string | number | boolean>({
   if (!valueMatchesOption && unknownLabel === undefined) {
     throw new Error(
       "StyledStringPickerE1: value does not match any option and unknownLabel is not provided.",
+      { cause: { value, options } },
     );
   }
 

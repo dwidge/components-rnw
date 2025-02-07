@@ -28,7 +28,7 @@ export const IconButton = withTheme(
         name={icon}
         size={24}
         color={onPress ? color : disabledColor}
-        style={{ padding: 10 }}
+        style={{ padding: 20, margin: -10 }}
       />
     </TouchableOpacity>
   ),
