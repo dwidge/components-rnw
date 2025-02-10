@@ -2,12 +2,11 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
+import { AsyncDispatch, AsyncState } from "@dwidge/hooks-react";
 import { Picker } from "@react-native-picker/picker";
 import { Colors, Theme, useTheme } from "@rneui/themed";
 import { StyleProp, TextStyle } from "react-native";
 import { StyledLoader } from "./StyledLoader";
-import { AsyncState } from "@dwidge/hooks-react";
-import { SetStateAction } from "react";
 
 export const StyledStringPicker = <T extends string | number | boolean>({
   value: [value, onChange],
@@ -99,12 +98,13 @@ export const StyledJsonPicker = <JsonValueType extends JsonValue>({
     label: option.label,
   }));
 
-  const stringifiedOnChange =
+  const stringifiedOnChange: AsyncDispatch<string> | undefined =
     value !== undefined && onChange
-      ? async (getV: SetStateAction<string>) => {
+      ? async (getV) => {
           const prevStringifiedV = stringifiedValue;
-          const newStringifiedV =
-            typeof getV === "function" ? getV(prevStringifiedV!) : getV;
+          const newStringifiedV = await (typeof getV === "function"
+            ? getV(prevStringifiedV!)
+            : getV);
           const parsedNewV: JsonValueType = JSON.parse(
             newStringifiedV as string,
           );
