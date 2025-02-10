@@ -17,12 +17,12 @@ export const ScreenView = withTheme(
   ({ children, backgroundColor, ...props }: ScreenViewProps) => (
     <SafeAreaView style={{ flex: 1, backgroundColor }}>
       <View style={{ zIndex: 1 }}>
-        <Toasts />
+        <Toasts preventScreenReaderFromHiding />
       </View>
       <StyledView flex column {...props}>
         {children}
       </StyledView>
     </SafeAreaView>
   ),
-  "ScreenView"
+  "ScreenView",
 ) as React.FC<ScreenViewProps>;
