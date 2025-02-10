@@ -4,7 +4,7 @@
 
 import { AsyncDispatch, AsyncState } from "@dwidge/hooks-react";
 import { Picker } from "@react-native-picker/picker";
-import { Colors, Theme, useTheme } from "@rneui/themed";
+import { Colors, Theme, useTheme, withTheme } from "@rneui/themed";
 import { StyleProp, TextStyle } from "react-native";
 import { StyledLoader } from "./StyledLoader";
 
@@ -124,4 +124,14 @@ export const StyledJsonPicker = <JsonValueType extends JsonValue>({
   );
 };
 
-export const StyledPicker = StyledJsonPicker;
+export type StyledPickerProps<JsonValueType extends JsonValue> = {
+  value: AsyncState<JsonValueType>;
+  options?: { label: string; value: JsonValueType }[];
+  unknownLabel?: string;
+  style?: StyleProp<TextStyle>;
+};
+
+export const StyledPicker = withTheme(
+  (props: StyledPickerProps<any>) => <StyledJsonPicker {...props} />,
+  "StyledPicker",
+) as React.FC<StyledPickerProps<any>>;
