@@ -3,6 +3,7 @@ export * from "./AlignedView.js";
 export * from "./CenterView.js";
 export * from "./Chip.js";
 export * from "./ColorScheme.js";
+export * from "./ConfirmButton.js";
 export * from "./ConsoleContext.js";
 export * from "./ConsoleScreen.js";
 export * from "./ContextError.js";
@@ -35,4 +36,3 @@ export * from "./UnstyledText.js";
 export * from "./UnstyledView.js";
 export * from "./useColorScheme.js";
 export * from "./userErrorMessage.js";
-
