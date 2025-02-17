@@ -5,8 +5,13 @@
 import { ScrollView as RNScrollView } from "react-native";
 import { StyledView, StyledViewProps } from "./StyledView.js";
 
-export const ScrollView = ({ children, ...props }: StyledViewProps) => (
+export const ScrollView = ({
+  children,
+  horizontal,
+  ...props
+}: StyledViewProps & { horizontal?: boolean }) => (
   <RNScrollView
+    horizontal={horizontal}
     // keyboardShouldPersistTaps="always"
     contentContainerStyle={{
       flexGrow: 1,
