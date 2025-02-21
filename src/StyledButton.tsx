@@ -12,7 +12,7 @@ export const StyledButton = ({
   loading = undefined,
   disabled = !onPress,
   icon,
-  disabledColor = useTheme().theme.colors.greyOutline,
+  disabledColor = useTheme()?.theme?.colors.greyOutline,
   iconColor = disabled ? disabledColor : "white",
   ...props
 }: Omit<ButtonProps, "onPress" | "icon"> & {
