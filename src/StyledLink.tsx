@@ -8,8 +8,8 @@ export type StyledLinkProps = {
 } & Omit<ButtonProps, "onPress" | "icon" | "title">;
 
 export const StyledLink: React.FC<StyledLinkProps> = ({
-  title,
-  url = title,
+  url,
+  title = url,
   ...props
 }) => (
   <StyledButton
