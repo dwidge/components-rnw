@@ -79,6 +79,7 @@ export const textStyles = StyleSheet.create({
   },
   flex: { flex: 1 },
   outline: { borderColor: "grey", borderWidth: 1 },
+  highlight: { color: "white", backgroundColor: "grey" },
   redBg: { backgroundColor: "red" },
   greenBg: { backgroundColor: "green" },
   orangeBg: { backgroundColor: "orange" },
