@@ -25,6 +25,7 @@ export * from "./StyledAccordion.js";
 export * from "./StyledButton.js";
 export * from "./StyledFontAwesome.js";
 export * from "./StyledGrid.js";
+export * from "./StyledLink.js";
 export * from "./StyledLoader.js";
 export * from "./StyledOverlay.js";
 export * from "./StyledPicker.js";
