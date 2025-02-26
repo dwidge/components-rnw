@@ -1,6 +1,6 @@
 {
   "name": "@dwidge/components-rnw",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "A collection of reusable React Native Web components.",
   "repository": {
     "type": "git",
@@ -26,13 +26,14 @@
   },
   "peerDependencies": {
     "@backpackapp-io/react-native-toast": "^0.13.0",
-    "@dwidge/hooks-react": "^0.0.11",
-    "@dwidge/utils-js": "^0.0.15",
+    "@dwidge/hooks-react": "^0.0.12",
+    "@dwidge/utils-js": "^0.0.16",
     "@expo/vector-icons": "^14.0.2",
     "@react-native-picker/picker": "^2.8.0",
     "@rneui/themed": "^4.0.0-rc.8",
     "react": "^18.2.0",
     "react-native": "^0.74.5",
+    "react-native-web": "^0.19.12",
     "react-native-safe-area-context": "^4.10.5"
   },
   "devDependencies": {
@@ -40,7 +41,7 @@
     "expect": "^29.7.0",
     "ncp": "^2.0.0",
     "rimraf": "^6.0.1",
-    "typescript": "^5.6.3"
+    "typescript": "^5.7.3"
   },
   "publishConfig": {
     "access": "public"
