@@ -6,8 +6,11 @@ import {
   useAsync,
   useAsyncSaveState,
   useAsyncState,
+  useConvert,
 } from "@dwidge/hooks-react";
+import { assert } from "@dwidge/utils-js";
 import { Input } from "@rneui/themed";
+import { useEffect, useState } from "react";
 import { StyleProp, TextStyle } from "react-native";
 import { StyledText } from "./StyledText";
 import { StyledView } from "./StyledView";
@@ -28,14 +31,25 @@ export const StyledTextInput = ({
     true,
     debounceMs,
   );
+  // Todo: fix cache causing cursor to jump to end, so we dont need localValue
+  const [localValue, setLocalValue] = useState<string | null>(cache ?? null);
+
+  useEffect(() => {
+    setLocalValue(cache ?? null);
+  }, [cache]);
 
   return (
-    <StyledView flex>
+    <StyledView flex sgap>
       <Input
         label={label}
         renderErrorMessage={false}
-        value={cache ?? ""}
-        onChangeText={setCache ? (s) => setCache(s || null) : undefined}
+        value={localValue ?? ""}
+        onChangeText={(text) => {
+          setLocalValue(text || null);
+          if (setCache) {
+            setCache(text || null);
+          }
+        }}
         onBlur={save}
         placeholder={placeholder}
         numberOfLines={numberOfLines}
@@ -46,45 +60,19 @@ export const StyledTextInput = ({
         ]}
         secureTextEntry={secureTextEntry}
       ></Input>
-      {error && <StyledText>{getError(error)}</StyledText>}
+      {error && <StyledText error>{getError(error)}</StyledText>}
     </StyledView>
   );
 };
+
+const useStringOfNumber = useConvert<number | null, string | null>(
+  (t) => (t === null ? "" : "" + t),
+  (r, prev) => (assert(!isNaN(Number(r)), "Not a number"), Number(r)),
+);
 
 export const StyledNumberInput = ({
   value: [value, setValue] = useAsyncState<number | null>(null),
-  label = undefined as string | undefined,
-  placeholder = undefined as string | undefined,
-  getError = (e: Error) => e.message,
-  debounceMs = 1000,
-  style = undefined as StyleProp<TextStyle> | undefined,
-}) => {
-  const [setValueTry, busy, error] = useAsync(setValue);
-  const [cache, setCacheRaw, changed, save] = useAsyncSaveState(
-    [value, setValueTry],
-    true,
-    debounceMs,
-  );
-
-  // Need to parse string to number and handle empty string as null
-  const setCache = setCacheRaw
-    ? (s: string | null) => {
-        setCacheRaw(s === null || s === "" ? null : +s);
-      }
-    : undefined;
-
-  return (
-    <StyledView flex>
-      <Input
-        label={label}
-        renderErrorMessage={false}
-        value={cache !== null && cache !== undefined ? "" + cache : ""}
-        onChangeText={setCache ? (s) => setCache(s) : undefined}
-        onBlur={save}
-        placeholder={placeholder}
-        style={[{ padding: 10, width: "100%" }, style]}
-      ></Input>
-      {error && <StyledText>{getError(error)}</StyledText>}
-    </StyledView>
-  );
-};
+  ...props
+}) => (
+  <StyledTextInput value={useStringOfNumber([value, setValue])} {...props} />
+);
