@@ -28,6 +28,7 @@ export * from "./StyledGrid.js";
 export * from "./StyledLink.js";
 export * from "./StyledLoader.js";
 export * from "./StyledModal.js";
+export * from "./StyledNumberInput.js";
 export * from "./StyledOverlay.js";
 export * from "./StyledPicker.js";
 export * from "./StyledText.js";
