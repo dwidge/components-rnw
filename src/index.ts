@@ -13,6 +13,7 @@ export * from "./Gap.js";
 export * from "./IconButton.js";
 export * from "./ImageThumbs.js";
 export * from "./MimeIcon.js";
+export * from "./NestLevelGuard.js";
 export * from "./notify.js";
 export * from "./PickerHint.js";
 export * from "./RenderCheck.js";
