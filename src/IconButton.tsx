@@ -1,20 +1,37 @@
-// Copyright DWJ 2024.
-// Distributed under the Boost Software License, Version 1.0.
-// https://www.boost.org/LICENSE_1_0.txt
-
-import { Ionicons } from "@expo/vector-icons";
-import { useTheme, withTheme } from "@rneui/themed";
-import React from "react";
+import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
+import { withTheme } from "@rneui/themed";
+import { useMemo } from "react";
 import {
   ColorValue,
   StyleProp,
   TouchableOpacity,
   ViewStyle,
 } from "react-native";
+import { StyledView } from "./StyledView";
+
+const iconComponents = [FontAwesome, Ionicons, Feather];
+
+const getIconComponent = (iconName: string) => {
+  for (const i of iconComponents) {
+    if (iconName in i.glyphMap) {
+      return i;
+    }
+  }
+  return iconComponents[0];
+};
+
+type FeatherGlyphNames = keyof typeof Feather.glyphMap;
+type FontAwesomeGlyphNames = keyof typeof FontAwesome.glyphMap;
+type IoniconsGlyphNames = keyof typeof Ionicons.glyphMap;
+
+export type IconButtonNames =
+  | FeatherGlyphNames
+  | FontAwesomeGlyphNames
+  | IoniconsGlyphNames;
 
 export type IconButtonProps = {
-  icon: keyof typeof Ionicons.glyphMap;
-  onPress?: () => void;
+  name?: IconButtonNames;
+  onPress?: () => unknown | Promise<unknown>;
   size?: number;
   color?: ColorValue;
   disabledColor?: ColorValue;
@@ -22,31 +39,48 @@ export type IconButtonProps = {
 };
 
 export const IconButton = withTheme(
-  ({ icon, onPress, color, disabledColor, style }: IconButtonProps) => (
-    <TouchableOpacity onPress={onPress} style={style}>
-      <Ionicons
-        name={icon}
-        size={24}
-        color={onPress ? color : disabledColor}
-        style={{ padding: 20, margin: -10 }}
-      />
-    </TouchableOpacity>
-  ),
-  "IconButton",
-) as React.FC<IconButtonProps>;
+  ({
+    name,
+    onPress,
+    size = 20,
+    color,
+    disabledColor,
+    style,
+    ...props
+  }: IconButtonProps) => {
+    const IconComponent = useMemo(
+      () => getIconComponent(name as string),
+      [name],
+    );
 
-export const StyledIcon = ({
-  theme = useTheme(),
-  icon,
-  ...props
-}: IconButtonProps & {
-  theme?: ReturnType<typeof useTheme>;
-}): JSX.Element | null => (
-  <Ionicons
-    name={icon}
-    size={24}
-    color={theme.theme.colors.primary}
-    style={{ paddingHorizontal: 10 }}
-    {...props}
-  />
+    return (
+      <TouchableOpacity onPress={onPress}>
+        <StyledView
+          center
+          middle
+          style={[
+            {
+              width: size,
+              height: size,
+            },
+            style,
+          ]}
+        >
+          <IconComponent
+            name={name as any}
+            size={size}
+            color={onPress ? color : disabledColor}
+            style={{
+              padding: 15,
+              margin: -15,
+              backgroundColor: "transparent",
+              opacity: onPress ? 1 : 0.2,
+            }}
+            {...props}
+          />
+        </StyledView>
+      </TouchableOpacity>
+    );
+  },
+  "IconButton",
 );

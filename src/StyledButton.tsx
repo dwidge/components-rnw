@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Button, ButtonProps, useTheme } from "@rneui/themed";
 import { useContext } from "react";
 import { EventErrorHandlerContext } from "./EventErrorHandler.js";
-import { StyledIcon } from "./IconButton.js";
+import { StyledIcon } from "./StyledIcon.js";
 
 export const StyledButton = ({
   onPress,

@@ -20,6 +20,9 @@ export const textStyles = StyleSheet.create({
   },
   link: { color: "blue" },
   error: { color: "red" },
+  xl: {
+    fontSize: 36,
+  },
   l: {
     fontSize: 30,
   },
