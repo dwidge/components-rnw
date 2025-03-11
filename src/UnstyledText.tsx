@@ -22,11 +22,12 @@ export const UnstyledText = <Styles extends TextStyleSheet>({
   children,
   style,
   stylesheet,
+  numberOfLines = 8,
   ...props
 }: UnstyledTextProps<Styles>): JSX.Element | null =>
   children ? (
     <Text
-      numberOfLines={1}
+      numberOfLines={numberOfLines}
       style={[
         stylesheet?.default,
         ...Object.entries(stylesheet ?? {})
@@ -36,8 +37,8 @@ export const UnstyledText = <Styles extends TextStyleSheet>({
       ]}
       {...Object.fromEntries(
         Object.entries(props).filter(
-          ([k, v]) => !Object.keys(stylesheet ?? {}).includes(k)
-        )
+          ([k, v]) => !Object.keys(stylesheet ?? {}).includes(k),
+        ),
       )}
       // {...props} // crashes android, filter out tags first
     >
