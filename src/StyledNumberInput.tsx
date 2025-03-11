@@ -45,9 +45,10 @@ export const StyledTextInput = ({
         renderErrorMessage={false}
         value={localValue ?? ""}
         onChangeText={(text) => {
-          setLocalValue(text || null);
+          const next = text.trim() || null;
+          setLocalValue(next);
           if (setCache) {
-            setCache(text || null);
+            setCache(next);
           }
         }}
         onBlur={save}
