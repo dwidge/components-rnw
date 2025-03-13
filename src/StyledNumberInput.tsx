@@ -24,6 +24,7 @@ export const StyledTextInput = ({
   numberOfLines = 1,
   style = undefined as StyleProp<TextStyle> | undefined,
   secureTextEntry = false,
+  trim = true,
 }) => {
   const [setValueTry, busy, error] = useAsync(setValue);
   const [cache, setCache, changed, save] = useAsyncSaveState(
@@ -45,10 +46,10 @@ export const StyledTextInput = ({
         renderErrorMessage={false}
         value={localValue ?? ""}
         onChangeText={(text) => {
-          const next = text.trim() || null;
+          const next = text || null;
           setLocalValue(next);
           if (setCache) {
-            setCache(next);
+            setCache((trim ? next?.trim() : next) || null);
           }
         }}
         onBlur={save}
