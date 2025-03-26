@@ -1,6 +1,6 @@
 import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { withTheme } from "@rneui/themed";
-import { useMemo } from "react";
+import { PropsWithChildren, useMemo } from "react";
 import {
   ColorValue,
   StyleProp,
@@ -36,7 +36,7 @@ export type IconButtonProps = {
   color?: ColorValue;
   disabledColor?: ColorValue;
   style?: StyleProp<ViewStyle>;
-};
+} & PropsWithChildren;
 
 export const IconButton = withTheme(
   ({
@@ -46,6 +46,7 @@ export const IconButton = withTheme(
     color,
     disabledColor,
     style,
+    children,
     ...props
   }: IconButtonProps) => {
     const IconComponent = useMemo(
@@ -54,30 +55,27 @@ export const IconButton = withTheme(
     );
 
     return (
-      <TouchableOpacity onPress={onPress}>
+      <TouchableOpacity onPress={onPress} style={style}>
         <StyledView
+          flex
           center
           middle
-          style={[
-            {
-              width: size,
-              height: size,
-            },
-            style,
-          ]}
+          row
+          sgap
+          style={[{ padding: 10, margin: -10, opacity: onPress ? 1 : 0.2 }]}
         >
           <IconComponent
             name={name as any}
             size={size}
             color={onPress ? color : disabledColor}
             style={{
-              padding: 15,
-              margin: -15,
+              width: size,
+              height: size,
               backgroundColor: "transparent",
-              opacity: onPress ? 1 : 0.2,
             }}
             {...props}
           />
+          {children}
         </StyledView>
       </TouchableOpacity>
     );
