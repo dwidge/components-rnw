@@ -12,6 +12,7 @@ import { assert } from "@dwidge/utils-js";
 import { Input } from "@rneui/themed";
 import { useEffect, useState } from "react";
 import { StyleProp, TextStyle } from "react-native";
+import { KeyboardAvoid } from "./KeyboardAvoid";
 import { StyledText } from "./StyledText";
 import { StyledView } from "./StyledView";
 
@@ -40,30 +41,32 @@ export const StyledTextInput = ({
   }, [cache]);
 
   return (
-    <StyledView flex sgap>
-      <Input
-        label={label}
-        renderErrorMessage={false}
-        value={localValue ?? ""}
-        onChangeText={(text) => {
-          const next = text || null;
-          setLocalValue(next);
-          if (setCache) {
-            setCache((trim ? next?.trim() : next) || null);
-          }
-        }}
-        onBlur={save}
-        placeholder={placeholder}
-        numberOfLines={numberOfLines}
-        multiline={numberOfLines > 1}
-        style={[
-          { padding: 10, width: "100%", textAlignVertical: "top" },
-          style,
-        ]}
-        secureTextEntry={secureTextEntry}
-      ></Input>
-      {error && <StyledText error>{getError(error)}</StyledText>}
-    </StyledView>
+    <KeyboardAvoid>
+      <StyledView flex sgap>
+        <Input
+          label={label}
+          renderErrorMessage={false}
+          value={localValue ?? ""}
+          onChangeText={(text) => {
+            const next = text || null;
+            setLocalValue(next);
+            if (setCache) {
+              setCache((trim ? next?.trim() : next) || null);
+            }
+          }}
+          onBlur={save}
+          placeholder={placeholder}
+          numberOfLines={numberOfLines}
+          multiline={numberOfLines > 1}
+          style={[
+            { padding: 10, width: "100%", textAlignVertical: "top" },
+            style,
+          ]}
+          secureTextEntry={secureTextEntry}
+        ></Input>
+        {error && <StyledText error>{getError(error)}</StyledText>}
+      </StyledView>
+    </KeyboardAvoid>
   );
 };
 
