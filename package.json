@@ -1,6 +1,6 @@
 {
   "name": "@dwidge/components-rnw",
-  "version": "0.0.27",
+  "version": "0.0.28",
   "description": "A collection of reusable React Native Web components.",
   "repository": {
     "type": "git",
@@ -26,7 +26,7 @@
   },
   "peerDependencies": {
     "@backpackapp-io/react-native-toast": "^0.13.0",
-    "@dwidge/hooks-react": "^0.0.21",
+    "@dwidge/hooks-react": "^0.0.22",
     "@dwidge/utils-js": "^0.0.21",
     "@expo/vector-icons": "^14.0.2",
     "@react-native-picker/picker": "^2.8.0",
