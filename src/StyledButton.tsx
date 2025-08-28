@@ -6,6 +6,14 @@ import { EventErrorHandlerContext } from "./EventErrorHandler.js";
 import { IoniconsGlyph } from "./IconName.js";
 import { StyledIcon } from "./StyledIcon.js";
 
+export type StyledButtonProps = Omit<ButtonProps, "onPress" | "icon"> & {
+  onPress?: () => unknown;
+  onError?: (e: unknown) => unknown;
+  icon?: IoniconsGlyph;
+  disabledColor?: string;
+  iconColor?: string;
+};
+
 export const StyledButton = ({
   onPress,
   onError = useContext(EventErrorHandlerContext),
@@ -15,13 +23,7 @@ export const StyledButton = ({
   disabledColor = useTheme()?.theme?.colors.greyOutline,
   iconColor = disabled ? disabledColor : "white",
   ...props
-}: Omit<ButtonProps, "onPress" | "icon"> & {
-  onPress?: () => unknown;
-  onError?: (e: unknown) => unknown;
-  icon?: IoniconsGlyph;
-  disabledColor?: string;
-  iconColor?: string;
-}) => {
+}: StyledButtonProps) => {
   const [onPressLoader, loading2] = useAsync(
     onPress
       ? async () => {
