@@ -1,4 +1,3 @@
-import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { withTheme } from "@rneui/themed";
 import { PropsWithChildren, useMemo } from "react";
 import {
@@ -7,30 +6,11 @@ import {
   TouchableOpacity,
   ViewStyle,
 } from "react-native";
+import { getIconComponent, IconGlyph } from "./IconName";
 import { StyledView } from "./StyledView";
 
-const iconComponents = [FontAwesome, Ionicons, Feather];
-
-const getIconComponent = (iconName: string) => {
-  for (const i of iconComponents) {
-    if (iconName in i.glyphMap) {
-      return i;
-    }
-  }
-  return iconComponents[0];
-};
-
-type FeatherGlyphNames = keyof typeof Feather.glyphMap;
-type FontAwesomeGlyphNames = keyof typeof FontAwesome.glyphMap;
-type IoniconsGlyphNames = keyof typeof Ionicons.glyphMap;
-
-export type IconButtonNames =
-  | FeatherGlyphNames
-  | FontAwesomeGlyphNames
-  | IoniconsGlyphNames;
-
 export type IconButtonProps = {
-  name?: IconButtonNames;
+  name?: IconGlyph;
   onPress?: () => unknown | Promise<unknown>;
   size?: number;
   color?: ColorValue;

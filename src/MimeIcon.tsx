@@ -2,14 +2,12 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesomeGlyph } from "./IconName.js";
 import { StyledFontAwesome } from "./StyledFontAwesome.js";
 
 // https://gist.github.com/colemanw/9c9a12aae16a4bfe2678de86b661d922
 // List of official MIME Types
 // http://www.iana.org/assignments/media-types/media-types.xhtml
-
-type FontAwesomeGlyph = keyof typeof FontAwesome.glyphMap;
 
 const specificGlyphs: Record<string, FontAwesomeGlyph> = {
   "application/pdf": "file-pdf-o",
@@ -38,13 +36,13 @@ const generalGlyphs: Record<string, FontAwesomeGlyph> = {
 };
 
 export const getFontAwesomeGlyphFromMime = (
-  mimeType?: string
+  mimeType?: string,
 ): FontAwesomeGlyph =>
   mimeType == undefined
     ? "question"
-    : specificGlyphs[mimeType] ??
+    : (specificGlyphs[mimeType] ??
       generalGlyphs[mimeType.split("/")[0] ?? ""] ??
-      "file-o";
+      "file-o");
 
 export const MimeIcon = ({ mime }: { mime?: string }): JSX.Element | null => (
   <StyledFontAwesome name={getFontAwesomeGlyphFromMime(mime)} />

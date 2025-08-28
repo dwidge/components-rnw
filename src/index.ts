@@ -12,6 +12,7 @@ export * from "./Error.js";
 export * from "./EventErrorHandler.js";
 export * from "./Gap.js";
 export * from "./IconButton.js";
+export * from "./IconName.js";
 export * from "./ImageThumbs.js";
 export * from "./KeyboardAvoid.js";
 export * from "./MimeIcon.js";

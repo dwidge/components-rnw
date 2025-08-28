@@ -1,9 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@rneui/themed";
 import { ColorValue, StyleProp, ViewStyle } from "react-native";
+import { IoniconsGlyph } from "./IconName";
 
 export type StyledIconProps = {
-  icon: keyof typeof Ionicons.glyphMap;
+  icon: IoniconsGlyph;
   onPress?: () => void;
   size?: number;
   color?: ColorValue;
@@ -16,7 +17,7 @@ export const StyledIcon = ({
   icon,
   ...props
 }: StyledIconProps & {
-  icon: keyof typeof Ionicons.glyphMap;
+  icon: IoniconsGlyph;
   theme?: ReturnType<typeof useTheme>;
 }): JSX.Element | null => (
   <Ionicons

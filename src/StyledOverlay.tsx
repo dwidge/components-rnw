@@ -2,9 +2,10 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-import React, { ReactNode } from "react";
-import { TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { ReactNode } from "react";
+import { TouchableOpacity, View } from "react-native";
+import { IoniconsGlyph } from "./IconName";
 
 export const StyledOverlay = ({
   children,
@@ -12,7 +13,7 @@ export const StyledOverlay = ({
 }: {
   children: ReactNode;
   actions?: {
-    icon: keyof typeof Ionicons.glyphMap;
+    icon: IoniconsGlyph;
     onPress: () => unknown;
   }[];
 }) => (

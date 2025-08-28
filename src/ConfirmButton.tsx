@@ -1,7 +1,7 @@
 import { sleep } from "@dwidge/utils-js";
-import { Ionicons } from "@expo/vector-icons";
 import { ButtonProps, useTheme } from "@rneui/themed";
 import { useEffect, useRef, useState } from "react";
+import { IoniconsGlyph } from "./IconName.js";
 import { StyledButton } from "./StyledButton.js";
 
 export type ConfirmButtonProps = Omit<
@@ -10,7 +10,7 @@ export type ConfirmButtonProps = Omit<
 > & {
   onPress?: () => unknown;
   onError?: (e: unknown) => unknown;
-  icon?: keyof typeof Ionicons.glyphMap;
+  icon?: IoniconsGlyph;
   disabledColor?: string;
   iconColor?: string;
   confirmColor?: string;

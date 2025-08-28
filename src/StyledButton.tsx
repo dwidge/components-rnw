@@ -1,9 +1,9 @@
 import { useAsync } from "@dwidge/hooks-react";
 import { sleep } from "@dwidge/utils-js";
-import { Ionicons } from "@expo/vector-icons";
 import { Button, ButtonProps, useTheme } from "@rneui/themed";
 import { useContext } from "react";
 import { EventErrorHandlerContext } from "./EventErrorHandler.js";
+import { IoniconsGlyph } from "./IconName.js";
 import { StyledIcon } from "./StyledIcon.js";
 
 export const StyledButton = ({
@@ -18,7 +18,7 @@ export const StyledButton = ({
 }: Omit<ButtonProps, "onPress" | "icon"> & {
   onPress?: () => unknown;
   onError?: (e: unknown) => unknown;
-  icon?: keyof typeof Ionicons.glyphMap;
+  icon?: IoniconsGlyph;
   disabledColor?: string;
   iconColor?: string;
 }) => {
