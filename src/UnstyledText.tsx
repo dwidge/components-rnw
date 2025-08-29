@@ -24,7 +24,7 @@ export const UnstyledText = <Styles extends TextStyleSheet>({
   stylesheet,
   numberOfLines = 8,
   ...props
-}: UnstyledTextProps<Styles>): JSX.Element | null =>
+}: UnstyledTextProps<Styles>): React.JSX.Element | null =>
   children ? (
     <Text
       numberOfLines={numberOfLines}

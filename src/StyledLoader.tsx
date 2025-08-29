@@ -5,7 +5,7 @@
 import { ActivityIndicator } from "react-native";
 import { CenterView } from "./CenterView.js";
 
-export const StyledLoader = (): JSX.Element | null => (
+export const StyledLoader = (): React.JSX.Element | null => (
   <CenterView>
     <ActivityIndicator size="large" color={"green"} />
   </CenterView>

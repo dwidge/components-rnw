@@ -44,6 +44,10 @@ export const getFontAwesomeGlyphFromMime = (
       generalGlyphs[mimeType.split("/")[0] ?? ""] ??
       "file-o");
 
-export const MimeIcon = ({ mime }: { mime?: string }): JSX.Element | null => (
+export const MimeIcon = ({
+  mime,
+}: {
+  mime?: string;
+}): React.JSX.Element | null => (
   <StyledFontAwesome name={getFontAwesomeGlyphFromMime(mime)} />
 );

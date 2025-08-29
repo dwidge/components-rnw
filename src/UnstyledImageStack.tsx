@@ -2,10 +2,10 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-import { Text } from "react-native";
-import { StyledView, StyledViewProps } from "./StyledView.js";
 import { Avatar } from "@rneui/themed";
+import { Text } from "react-native";
 import { StyledFontAwesome } from "./StyledFontAwesome.js";
+import { StyledView, StyledViewProps } from "./StyledView.js";
 
 export const UnstyledImageStack = ({
   images,
@@ -15,7 +15,7 @@ export const UnstyledImageStack = ({
 }: StyledViewProps & {
   size?: number;
   images: readonly { uri?: string }[];
-}): JSX.Element | null => (
+}): React.JSX.Element | null => (
   <StyledView
     row
     style={[
@@ -36,7 +36,7 @@ export const UnstyledImageStack = ({
           />
         ) : (
           <StyledFontAwesome key={i} name="image" size={30} />
-        )
+        ),
       )}
     <Text style={{ width: 20 }}>
       {images.length > 3 ? "+" + (images.length - 3) : ""}

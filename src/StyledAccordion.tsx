@@ -20,7 +20,7 @@ export const StyledAccordion = <T, K extends string | number>({
   Detail?: (p: { item: T }) => ReactNode;
   toggleAccordion?: (id: K) => unknown;
   onPress?: (key: K) => unknown;
-}): JSX.Element | null =>
+}): React.JSX.Element | null =>
   items === undefined ? (
     <StyledLoader />
   ) : (

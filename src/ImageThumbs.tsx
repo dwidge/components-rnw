@@ -2,9 +2,9 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-import { StyledView, StyledViewProps } from "./StyledView.js";
 import { Avatar } from "@rneui/themed";
 import { StyledFontAwesome } from "./StyledFontAwesome.js";
+import { StyledView, StyledViewProps } from "./StyledView.js";
 
 export const ImageThumbs = ({
   images,
@@ -13,7 +13,7 @@ export const ImageThumbs = ({
 }: StyledViewProps & {
   size?: number;
   images: readonly { uri?: string }[];
-}): JSX.Element | null => (
+}): React.JSX.Element | null => (
   <StyledView row sgap wrap {...props}>
     {images
       .slice(0, 3)
@@ -22,7 +22,7 @@ export const ImageThumbs = ({
           <Avatar key={i} source={img} size={size} />
         ) : (
           <StyledFontAwesome key={i} name="image" size={30} />
-        )
+        ),
       )}
   </StyledView>
 );

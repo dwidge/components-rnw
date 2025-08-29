@@ -11,7 +11,7 @@ export const SelectableList = <T, K extends string | number>({
   items = undefined as T[] | undefined,
   keyExtractor = (item: T) => (item as { id: K }).id as K,
   selection: [selection, setSelection] = useState<K[]>([]),
-  Render = ({ item }: { item: T }): JSX.Element | null => (
+  Render = ({ item }: { item: T }): React.JSX.Element | null => (
     <StyledText>{keyExtractor(item)}</StyledText>
   ),
   toggleSelection = (id: K) =>
@@ -33,7 +33,7 @@ export const SelectableList = <T, K extends string | number>({
   onLongPress?: (key: K) => unknown;
   unselectStyle?: StyleProp<ViewStyle>;
   selectStyle?: StyleProp<ViewStyle>;
-}): JSX.Element | null =>
+}): React.JSX.Element | null =>
   items ? (
     <>
       {items.map(

@@ -19,7 +19,7 @@ export const StyledIcon = ({
 }: StyledIconProps & {
   icon: IoniconsGlyph;
   theme?: ReturnType<typeof useTheme>;
-}): JSX.Element | null => (
+}): React.JSX.Element | null => (
   <Ionicons
     name={icon}
     size={24}

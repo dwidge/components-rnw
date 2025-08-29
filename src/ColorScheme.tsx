@@ -2,10 +2,10 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-import { View, Text } from "react-native";
+import { Text, View } from "react-native";
 import { useColorScheme } from "./useColorScheme.js";
 
-export function ColorScheme(): JSX.Element | null {
+export function ColorScheme(): React.JSX.Element | null {
   const c = useColorScheme();
   console.log("ColorScheme1", c);
 

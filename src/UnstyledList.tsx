@@ -16,11 +16,11 @@ export const UnstyledList = <T, K extends string | number>({
     item: T,
     isExpanded: boolean,
     isSelected: boolean,
-    onExpand: () => unknown
-  ): JSX.Element | null => <StyledText>{keyExtractor(item)}</StyledText>,
+    onExpand: () => unknown,
+  ): React.JSX.Element | null => <StyledText>{keyExtractor(item)}</StyledText>,
   toggleSelection = (id: K) =>
     setSelection((s) =>
-      s.includes(id) ? s.filter((v) => v !== id) : s.concat(id)
+      s.includes(id) ? s.filter((v) => v !== id) : s.concat(id),
     ),
   toggleAccordion = (id: K) => setExpanded((prev) => (prev === id ? null : id)),
   onPress = (key: K) =>
@@ -37,7 +37,7 @@ export const UnstyledList = <T, K extends string | number>({
     item: T,
     isExpanded: boolean,
     isSelected: boolean,
-    onExpand: () => unknown
+    onExpand: () => unknown,
   ) => ReactNode;
   toggleSelection?: (id: K) => unknown;
   toggleAccordion?: (id: K) => unknown;
@@ -45,7 +45,7 @@ export const UnstyledList = <T, K extends string | number>({
   onLongPress?: (key: K) => unknown;
   style?: StyleProp<ViewStyle>;
   selectStyle?: StyleProp<ViewStyle>;
-}): JSX.Element | null =>
+}): React.JSX.Element | null =>
   items ? (
     <>
       {items.map(
@@ -55,7 +55,7 @@ export const UnstyledList = <T, K extends string | number>({
           a,
           key = keyExtractor(item),
           isExpanded = expanded === key,
-          isSelected = selection.includes(key)
+          isSelected = selection.includes(key),
         ) => (
           <TouchableOpacity
             key={key}
@@ -65,7 +65,7 @@ export const UnstyledList = <T, K extends string | number>({
           >
             {render(item, isExpanded, isSelected, () => toggleAccordion(key))}
           </TouchableOpacity>
-        )
+        ),
       )}
     </>
   ) : (
