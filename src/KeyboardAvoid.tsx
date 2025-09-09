@@ -9,7 +9,7 @@ type KeyboardAvoidSettings = {
 
 const KeyboardAvoidContext = createContext<KeyboardAvoidSettings>({
   behavior: Platform.OS === "ios" ? "padding" : "height",
-  keyboardVerticalOffset: 80,
+  keyboardVerticalOffset: Platform.OS === "ios" ? 0 : 0,
   style: { flex: 1 },
 });
 

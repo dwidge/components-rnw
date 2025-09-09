@@ -2,12 +2,13 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
-import React from "react";
-import { ColorValue, View } from "react-native";
-import { StyledView, StyledViewProps } from "./StyledView.js";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Toasts } from "@backpackapp-io/react-native-toast";
 import { withTheme } from "@rneui/themed";
+import React from "react";
+import { ColorValue, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { KeyboardAvoid } from "./KeyboardAvoid.js";
+import { StyledView, StyledViewProps } from "./StyledView.js";
 
 export type ScreenViewProps = {
   backgroundColor?: ColorValue;
@@ -16,12 +17,14 @@ export type ScreenViewProps = {
 export const ScreenView = withTheme(
   ({ children, backgroundColor, ...props }: ScreenViewProps) => (
     <SafeAreaView style={{ flex: 1, backgroundColor }}>
-      <View style={{ zIndex: 1 }}>
-        <Toasts preventScreenReaderFromHiding />
-      </View>
-      <StyledView flex column {...props}>
-        {children}
-      </StyledView>
+      <KeyboardAvoid>
+        <View style={{ zIndex: 1 }}>
+          <Toasts preventScreenReaderFromHiding />
+        </View>
+        <StyledView flex column {...props}>
+          {children}
+        </StyledView>
+      </KeyboardAvoid>
     </SafeAreaView>
   ),
   "ScreenView",
