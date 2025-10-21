@@ -3,7 +3,7 @@
 // https://www.boost.org/LICENSE_1_0.txt
 
 import { OptionalState } from "@dwidge/hooks-react";
-import React, { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { Modal, Pressable } from "react-native";
 
 type StyledModalState = boolean;
@@ -18,7 +18,7 @@ export const StyledModal = ({
     (onClose: () => unknown) => <></>,
   ] as const,
   onClose = () => state[1]?.(false),
-  onPressOutside = () => onClose(),
+  onPressOutside = () => {},
 }) => (
   <StyledModalContext.Provider value={state}>
     {button(() => {
