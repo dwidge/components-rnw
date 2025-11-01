@@ -40,6 +40,7 @@ export * from "./StyledPicker.js";
 export * from "./StyledText.js";
 export * from "./StyledView.js";
 export * from "./SwitchButton.js";
+export * from "./TextInput.js";
 export * from "./UnstyledImageStack.js";
 export * from "./UnstyledList.js";
 export * from "./UnstyledText.js";
