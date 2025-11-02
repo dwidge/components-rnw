@@ -18,12 +18,12 @@ export const ScreenView = withTheme(
   ({ children, backgroundColor, ...props }: ScreenViewProps) => (
     <SafeAreaView style={{ flex: 1, backgroundColor }}>
       <KeyboardAvoid>
-        <View style={{ zIndex: 1 }}>
-          <Toasts preventScreenReaderFromHiding />
-        </View>
         <StyledView flex column {...props}>
           {children}
         </StyledView>
+        <View style={{ position: "absolute" }}>
+          <Toasts preventScreenReaderFromHiding />
+        </View>
       </KeyboardAvoid>
     </SafeAreaView>
   ),
