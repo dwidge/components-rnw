@@ -26,6 +26,7 @@ export * from "./ScrollView.js";
 export * from "./SelectableList.js";
 export * from "./SingleChoiceToggleGroup.js";
 export * from "./Spacer.js";
+export * from "./StringInput.js";
 export * from "./StyledAccordion.js";
 export * from "./StyledButton.js";
 export * from "./StyledFontAwesome.js";
