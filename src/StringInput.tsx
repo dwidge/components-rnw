@@ -34,8 +34,18 @@ export const StringInput = ({
       placeholder={placeholder}
       numberOfLines={numberOfLines}
       multiline={numberOfLines > 1}
-      style={{ padding: 10, width: "100%", textAlignVertical: "top" }}
-      containerStyle={style}
+      style={{
+        padding: 10,
+        width: "100%",
+        textAlignVertical: "top",
+      }}
+      containerStyle={[
+        {
+          margin: 0,
+          gap: 10,
+        },
+        style,
+      ]}
       secureTextEntry={secureTextEntry}
     ></Input>
   );
