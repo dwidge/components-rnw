@@ -9,6 +9,7 @@ export interface SingleChoiceToggleGroupProps<
   value?: T | null;
   onChange?: (newValue: T | null) => void;
   label?: string;
+  nullable?: boolean;
 }
 
 export const SingleChoiceToggleGroup = <T extends string | number | boolean>({
@@ -16,6 +17,7 @@ export const SingleChoiceToggleGroup = <T extends string | number | boolean>({
   value,
   onChange,
   label,
+  nullable = false,
 }: SingleChoiceToggleGroupProps<T>) => (
   <>
     {label ? <StyledText>{label}</StyledText> : null}
@@ -24,7 +26,15 @@ export const SingleChoiceToggleGroup = <T extends string | number | boolean>({
         key={"" + option.value}
         onPress={
           onChange
-            ? () => onChange(value === option.value ? null : option.value)
+            ? () => {
+                if (value === option.value) {
+                  if (nullable) {
+                    onChange(null);
+                  }
+                } else {
+                  onChange(option.value);
+                }
+              }
             : undefined
         }
       >
