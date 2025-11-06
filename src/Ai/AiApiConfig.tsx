@@ -7,10 +7,10 @@ import {
 } from "@dwidge/hooks-react";
 import { FC } from "react";
 import { StringInput } from "../StringInput";
-import { AiApi, useAiApiConfig } from "./AiApiContext";
+import { AiApi, defaultConfig, useAiApiConfig } from "./AiApiContext";
 
 export const AiApiConfigView: FC = () => (
-  <AiApiConfigForm value={useNonNullable(useAiApiConfig())} />
+  <AiApiConfigForm value={useNonNullable(useAiApiConfig(), defaultConfig)} />
 );
 
 export const AiApiConfigForm = ({ value }: { value: AsyncState<AiApi> }) => (
@@ -24,7 +24,6 @@ export const AiApiConfigForm = ({ value }: { value: AsyncState<AiApi> }) => (
       label="API Key"
       value={useStringNull(useField(value, "apiKey", null))}
       placeholder="API Key"
-      secureTextEntry
     />
     <StringInput
       label="Model Name"
