@@ -8,14 +8,17 @@ export interface SingleChoiceToggleGroupProps<
   options?: { value: T | null; label: string }[];
   value?: T | null;
   onChange?: (newValue: T | null) => void;
+  label?: string;
 }
 
 export const SingleChoiceToggleGroup = <T extends string | number | boolean>({
   options,
   value,
   onChange,
+  label,
 }: SingleChoiceToggleGroupProps<T>) => (
   <>
+    {label ? <StyledText>{label}</StyledText> : null}
     {options?.map((option) => (
       <Pressable
         key={"" + option.value}
