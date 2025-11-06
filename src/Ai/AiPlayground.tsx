@@ -1,7 +1,7 @@
-import { useAsyncState } from "@dwidge/hooks-react";
+import { useAsyncState, useStringNull } from "@dwidge/hooks-react";
 import { FC, useState } from "react";
+import { StringInput } from "../StringInput";
 import { StyledButton } from "../StyledButton";
-import { StyledTextInput } from "../StyledNumberInput";
 import { StyledText } from "../StyledText";
 import { StyledView } from "../StyledView";
 import { stripHtmlJunk } from "./stripHtmlJunk";
@@ -56,20 +56,20 @@ export const AiPlayground: FC = () => {
   const outputCharacterCount = aiResponse ? aiResponse.length : 0;
 
   return (
-    <StyledView gap pad outline>
-      <StyledTextInput
+    <StyledView sgap pad outline>
+      <StringInput
         label="System"
-        value={[systemPrompt, setSystemPrompt]}
+        value={useStringNull([systemPrompt, setSystemPrompt])}
         placeholder="System prompt..."
         numberOfLines={3}
       />
-      <StyledTextInput
+      <StringInput
         label="User"
-        value={[userMessage, setUserMessage]}
+        value={useStringNull([userMessage, setUserMessage])}
         placeholder="User message..."
         numberOfLines={10}
       />
-      <StyledText>Characters: {inputCharacterCount}</StyledText>
+      <StyledText right>Characters: {inputCharacterCount}</StyledText>
 
       <StyledView row gap>
         <StyledButton onPress={() => handleTestAi(aiApi)}>Send</StyledButton>

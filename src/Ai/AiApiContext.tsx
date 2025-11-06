@@ -1,4 +1,4 @@
-import { AsyncState, OptionalState } from "@dwidge/hooks-react";
+import { AsyncState } from "@dwidge/hooks-react";
 import { createContext, useContext } from "react";
 
 export interface AiApi {
@@ -17,11 +17,11 @@ export const defaultConfig: AiApi = {
   maxOutputTokens: 4 * 1024,
 };
 
-export const AiApiContext = createContext<
-  AsyncState<AiApi | null> | OptionalState<AiApi | null>
->([defaultConfig]);
+export const AiApiContext = createContext<AsyncState<AiApi | null>>([
+  defaultConfig,
+]);
 
-const useAiApiConfig = () => useContext(AiApiContext);
+export const useAiApiConfig = () => useContext(AiApiContext);
 
 export const useAiApiGet = () => useAiApiConfig()[0] ?? defaultConfig;
 export const useAiApiSet = () => useAiApiConfig()[1];

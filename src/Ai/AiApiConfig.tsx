@@ -1,90 +1,49 @@
+import {
+  AsyncState,
+  useField,
+  useNonNullable,
+  useStringNull,
+  useStringNumberNull,
+} from "@dwidge/hooks-react";
 import { FC } from "react";
-import { StyledNumberInput, StyledTextInput } from "../StyledNumberInput";
-import { StyledView } from "../StyledView";
-import { defaultConfig, useAiApiGet, useAiApiSet } from "./AiApiContext";
+import { StringInput } from "../StringInput";
+import { AiApi, useAiApiConfig } from "./AiApiContext";
 
-export const AiApiConfig: FC = () => {
-  const config = useAiApiGet();
-  const setConfig = useAiApiSet();
+export const AiApiConfigView: FC = () => (
+  <AiApiConfigForm value={useNonNullable(useAiApiConfig())} />
+);
 
-  return (
-    <StyledView gap pad outline>
-      <StyledTextInput
-        label="API URL"
-        value={[
-          config.apiUrl || "",
-          async (getV) => {
-            const v = await (typeof getV === "function" ? getV(null) : getV);
-            setConfig?.((prevConfig) => ({
-              ...(prevConfig ?? defaultConfig),
-              apiUrl: v,
-            }));
-            return v;
-          },
-        ]}
-        placeholder="API URL (https://api.groq.com/openai/v1)"
-      />
-      <StyledTextInput
-        label="API Key"
-        value={[
-          config.apiKey || "",
-          async (getV) => {
-            const v = await (typeof getV === "function" ? getV(null) : getV);
-            setConfig?.((prevConfig) => ({
-              ...(prevConfig ?? defaultConfig),
-              apiKey: v,
-            }));
-            return v;
-          },
-        ]}
-        placeholder="API Key"
-        secureTextEntry
-      />
-      <StyledTextInput
-        label="Model Name"
-        value={[
-          config.model || "",
-          async (getV) => {
-            const v = await (typeof getV === "function" ? getV(null) : getV);
-            setConfig?.((prevConfig) => ({
-              ...(prevConfig ?? defaultConfig),
-              model: v,
-            }));
-            return v;
-          },
-        ]}
-        placeholder="Model Name (llama-3.2-3b-preview)"
-      />
-      <StyledNumberInput
-        label="Max Input Characters"
-        value={[
-          config.maxInputCharacters ?? null,
-          async (getV) => {
-            const v = await (typeof getV === "function" ? getV(null) : getV);
-            setConfig?.((prevConfig) => ({
-              ...(prevConfig ?? defaultConfig),
-              maxInputCharacters: v,
-            }));
-            return v;
-          },
-        ]}
-        placeholder="Max Input Characters (e.g., 10000)"
-      />
-      <StyledNumberInput
-        label="Max Output Tokens"
-        value={[
-          config.maxOutputTokens ?? null,
-          async (getV) => {
-            const v = await (typeof getV === "function" ? getV(null) : getV);
-            setConfig?.((prevConfig) => ({
-              ...(prevConfig ?? defaultConfig),
-              maxOutputTokens: v,
-            }));
-            return v;
-          },
-        ]}
-        placeholder="Max Output Tokens (e.g., 1024)"
-      />
-    </StyledView>
-  );
-};
+export const AiApiConfigForm = ({ value }: { value: AsyncState<AiApi> }) => (
+  <>
+    <StringInput
+      label="API URL"
+      value={useStringNull(useField(value, "apiUrl", null))}
+      placeholder="API URL (https://api.groq.com/openai/v1)"
+    />
+    <StringInput
+      label="API Key"
+      value={useStringNull(useField(value, "apiKey", null))}
+      placeholder="API Key"
+      secureTextEntry
+    />
+    <StringInput
+      label="Model Name"
+      value={useStringNull(useField(value, "model", null))}
+      placeholder="Model Name (llama-3.2-3b-preview)"
+    />
+    <StringInput
+      label="Max Input Characters"
+      value={useStringNull(
+        useStringNumberNull(useField(value, "maxInputCharacters", null)),
+      )}
+      placeholder="Max Input Characters (e.g., 10000)"
+    />
+    <StringInput
+      label="Max Output Tokens"
+      value={useStringNull(
+        useStringNumberNull(useField(value, "maxOutputTokens", null)),
+      )}
+      placeholder="Max Output Tokens (e.g., 1024)"
+    />
+  </>
+);
