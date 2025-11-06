@@ -33,6 +33,7 @@ export const AiApiConfigForm = ({ value }: { value: AsyncState<AiApi> }) => (
       value={useStringNull(useField(value, "model", null))}
       placeholder="Model Name (llama-3.2-3b-preview)"
     />
+    <ModelPresetButtons model={useField(value, "model", null)} />
     <StringInput
       label="Max Input Characters"
       value={useStringNull(
@@ -75,6 +76,34 @@ const PresetButtons = ({
           key={preset.label}
           title={preset.label}
           onPress={handlePresetClick(preset.url)}
+        />
+      ))}
+    </StyledView>
+  );
+};
+
+const ModelPresetButtons = ({
+  model: [model, setModel],
+}: {
+  model: AsyncState<string | null>;
+}) => {
+  const presets = [
+    { label: "Gemini Flash", modelName: "gemini-flash-lite-latest" },
+    { label: "GPT-OSS-120B", modelName: "gpt-oss-120b" },
+    { label: "GPT-5 Nano", modelName: "openai/gpt-5-nano" },
+    { label: "Grok-4 Fast", modelName: "x-ai/grok-4-fast" },
+  ];
+
+  const handlePresetClick = (modelName: string) =>
+    setModel ? () => setModel(modelName) : undefined;
+
+  return (
+    <StyledView row wrap gap>
+      {presets.map((preset) => (
+        <StyledButton
+          key={preset.label}
+          title={preset.label}
+          onPress={handlePresetClick(preset.modelName)}
         />
       ))}
     </StyledView>
