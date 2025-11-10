@@ -10,6 +10,6 @@ export const StyledLoader: typeof CenterView = ({
   ...args
 }): React.JSX.Element => (
   <CenterView {...args}>
-    <ActivityIndicator size="large" color={"green"} />
+    <ActivityIndicator testID="StyledLoader" size="large" color={"green"} />
   </CenterView>
 );

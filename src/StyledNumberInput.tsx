@@ -25,6 +25,7 @@ export const StyledTextInput = ({
   style = undefined as StyleProp<TextStyle> | undefined,
   secureTextEntry = false,
   trim = true,
+  testID = undefined as string | undefined,
 }) => {
   const [setValueTry, busy, error] = useAsync(setValue);
   const [cache, setCache, changed, save] = useAsyncSaveState(
@@ -42,6 +43,7 @@ export const StyledTextInput = ({
   return (
     <StyledView flex sgap>
       <Input
+        testID={testID}
         label={label}
         renderErrorMessage={false}
         value={localValue ?? ""}
