@@ -2,10 +2,10 @@
 // Distributed under the Boost Software License, Version 1.0.
 // https://www.boost.org/LICENSE_1_0.txt
 
+import { withTheme } from "@rneui/themed";
 import React from "react";
 import { StyleSheet } from "react-native";
-import { UnstyledViewProps, UnstyledView } from "./UnstyledView.js";
-import { withTheme } from "@rneui/themed";
+import { UnstyledView, UnstyledViewProps } from "./UnstyledView.js";
 
 export const viewStyles = StyleSheet.create({
   default: {},
@@ -49,7 +49,7 @@ export const viewStyles = StyleSheet.create({
   extends: { paddingHorizontal: 15, marginHorizontal: -15 },
   minWidth: { minWidth: 150, width: "100%" },
   narrow: { maxWidth: 300, width: "100%" },
-  wide: { maxWidth: 600, width: "100%" },
+  wide: { maxWidth: 720, width: "100%" },
   selfcenter: { alignSelf: "center" },
   hidden: { height: 0 },
   mediumSquare: { minWidth: 120, minHeight: 120 },
