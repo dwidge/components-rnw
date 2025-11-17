@@ -1,7 +1,7 @@
 import { useAsyncState, useStringNull } from "@dwidge/hooks-react";
+import { WebView } from "@dwidge/react-native-web-webview";
 import { FC, useState } from "react";
 import { Linking } from "react-native";
-import { WebView } from "react-native-webview";
 import { StringInput } from "../StringInput";
 import { StyledButton } from "../StyledButton";
 import { StyledText } from "../StyledText";
