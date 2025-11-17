@@ -15,11 +15,7 @@ export const AiSourcesList: FC<{
     <StyledView sgap>
       <StyledText h4>Sources</StyledText>
       {sources.map((source, index) => (
-        <StyledText
-          key={index}
-          onPress={() => Linking.openURL(source.url)}
-          style={{ textDecorationLine: "underline", color: "blue" }}
-        >
+        <StyledText key={index} onPress={() => Linking.openURL(source.url)}>
           {index + 1}. {source.title || source.url}
         </StyledText>
       ))}
@@ -32,12 +28,40 @@ export const AiSuggestions: FC<{
   suggestionsHtml?: AiApiResponse["suggestionsHtml"];
 }> = ({ suggestions, suggestionsHtml }) => {
   if (suggestionsHtml) {
+    const styledHtml = `
+      <html>
+        <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <style>
+            body {
+              margin: 0;
+              padding: 0;
+              display: flex;
+              flex-wrap: wrap;
+              align-items: center;
+              gap: 8px;
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            }
+            a {
+              text-decoration: none;
+              color: #007AFF;
+              background-color: #f0f0f0;
+              padding: 4px 8px;
+              border-radius: 4px;
+            }
+          </style>
+        </head>
+        <body>
+          ${suggestionsHtml}
+        </body>
+      </html>
+    `;
     return (
       <StyledView sgap>
         <StyledText h4>Suggestions</StyledText>
         <WebView
           originWhitelist={["*"]}
-          source={{ html: suggestionsHtml }}
+          source={{ html: styledHtml }}
           style={{ height: 60 }}
           onShouldStartLoadWithRequest={(event) => {
             if (event.navigationType === "click") {
