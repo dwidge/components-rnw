@@ -60,8 +60,12 @@ const PresetButtons = ({
     { label: "OpenAI", url: "https://api.openai.com/v1" },
     { label: "Groq", url: "https://api.groq.com/openai/v1" },
     {
-      label: "Gemini",
+      label: "Gemini (OpenAI)",
       url: "https://generativelanguage.googleapis.com/v1beta/openai",
+    },
+    {
+      label: "Gemini (Native)",
+      url: "https://generativelanguage.googleapis.com/v1beta",
     },
     { label: "OpenRouter", url: "https://openrouter.ai/api/v1" },
   ];

@@ -1,6 +1,6 @@
 import { notNull } from "@dwidge/utils-js";
 import { useMemo } from "react";
-import { useAiApiGet } from "./AiApiContext";
+import { AiApi, useAiApiGet } from "./AiApiContext";
 import { toString } from "./toString";
 
 export interface AiApiResponse {
@@ -8,6 +8,93 @@ export interface AiApiResponse {
   sources?: { url: string; title?: string }[];
   suggestions?: string[];
 }
+
+const geminiNativePrompt = async (
+  system: string,
+  user: string,
+  assistant: string | undefined,
+  stop: string | undefined,
+  online: boolean | undefined,
+  config: AiApi,
+): Promise<AiApiResponse> => {
+  const { apiUrl, apiKey, model, maxOutputTokens } = config;
+
+  if (!apiUrl || !apiKey || !model) {
+    throw new Error("useAiApiE5: Gemini API configuration is incomplete.");
+  }
+
+  const contents = [
+    { role: "user", parts: [{ text: user }] },
+    assistant ? { role: "model", parts: [{ text: assistant }] } : undefined,
+  ].filter(notNull);
+
+  const body = {
+    ...(system && { systemInstruction: { parts: [{ text: system }] } }),
+    contents,
+    ...(online && { tools: [{ googleSearch: {} }] }),
+    ...((maxOutputTokens != null || stop) && {
+      generationConfig: {
+        ...(maxOutputTokens != null && { maxOutputTokens: maxOutputTokens }),
+        ...(stop && { stopSequences: [stop] }),
+      },
+    }),
+  };
+
+  try {
+    const response = await fetch(
+      `${apiUrl}/models/${model}:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      },
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(
+        "useAiApiE6",
+        {
+          error: `Gemini API Error: ${response.status} - ${response.statusText}`,
+          details: errorData,
+        },
+        response,
+      );
+      throw new Error(
+        "useAiApiE6: Gemini request failed: " + response.statusText,
+        {
+          cause: {
+            error: `Gemini API Error: ${response.status} - ${response.statusText}`,
+            details: errorData,
+          },
+        },
+      );
+    }
+
+    const responseData = await response.json();
+    const candidate = responseData.candidates?.[0];
+    const text =
+      candidate?.content?.parts
+        ?.map((p: any) => p.text)
+        .filter(Boolean)
+        .join("") ?? "";
+
+    let sources: AiApiResponse["sources"];
+    const citationSources = candidate?.citationMetadata?.citationSources;
+    if (citationSources) {
+      sources = citationSources.map((s: any) => ({
+        url: s.uri,
+        title: s.uri,
+      }));
+    }
+
+    return { text, sources, suggestions: undefined };
+  } catch (error) {
+    throw new Error("useAiApiE7: Gemini request failed", { cause: error });
+  }
+};
 
 export const useAiApiPrompt = () => {
   const config = useAiApiGet();
@@ -31,6 +118,20 @@ export const useAiApiPrompt = () => {
                 `useAiApiE1: Input text length (${
                   system.length + user.length
                 }) exceeds maximum allowed characters (${maxInputCharacters}).`,
+              );
+            }
+
+            if (
+              apiUrl.includes("generativelanguage.googleapis.com") &&
+              !apiUrl.endsWith("/openai")
+            ) {
+              return geminiNativePrompt(
+                system,
+                user,
+                assistant,
+                stop,
+                online,
+                config,
               );
             }
 
