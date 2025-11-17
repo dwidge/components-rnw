@@ -63,7 +63,7 @@ export const AiPlayground: FC = () => {
   const outputCharacterCount = aiResponse?.text ? aiResponse.text.length : 0;
 
   return (
-    <StyledView sgap pad outline>
+    <StyledView gap pad outline>
       <StringInput
         label="System"
         value={useStringNull([systemPrompt, setSystemPrompt])}
@@ -91,18 +91,21 @@ export const AiPlayground: FC = () => {
       </StyledView>
 
       {(aiResponse || aiError) && (
-        <StyledView>
+        <StyledView gap>
           <StyledText numberOfLines={2000} error={!!aiError}>
             {aiResponse?.text || aiError}
           </StyledText>
+          {!aiError && aiResponse?.text && (
+            <StyledText right>Characters: {outputCharacterCount}</StyledText>
+          )}
           {aiResponse?.sources && aiResponse.sources.length > 0 && (
-            <StyledView gap>
-              <StyledText>Sources:</StyledText>
+            <StyledView sgap>
+              <StyledText h4>Sources</StyledText>
               {aiResponse.sources.map((source, index) => (
                 <StyledText
                   key={index}
                   onPress={() => Linking.openURL(source.url)}
-                  style={{ color: "blue", textDecorationLine: "underline" }}
+                  style={{ textDecorationLine: "underline" }}
                 >
                   {index + 1}. {source.title || source.url}
                 </StyledText>
@@ -110,16 +113,16 @@ export const AiPlayground: FC = () => {
             </StyledView>
           )}
           {aiResponse?.suggestions && aiResponse.suggestions.length > 0 && (
-            <StyledView gap>
-              <StyledText>Suggestions:</StyledText>
+            <StyledView sgap>
+              <StyledText h4>Suggestions</StyledText>
               {aiResponse.suggestions.map((suggestion, index) => (
                 <StyledText key={index}>- {suggestion}</StyledText>
               ))}
             </StyledView>
           )}
           {aiResponse?.suggestionsHtml && (
-            <StyledView gap>
-              <StyledText>Suggestions:</StyledText>
+            <StyledView sgap>
+              <StyledText h4>Suggestions</StyledText>
               <WebView
                 originWhitelist={["*"]}
                 source={{ html: aiResponse.suggestionsHtml }}
@@ -133,9 +136,6 @@ export const AiPlayground: FC = () => {
                 }}
               />
             </StyledView>
-          )}
-          {!aiError && aiResponse?.text && (
-            <StyledText>Characters: {outputCharacterCount}</StyledText>
           )}
         </StyledView>
       )}
