@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useAiApiPrompt } from "./useAiApiPrompt";
+import { AiApiResponse, useAiApiPrompt } from "./useAiApiPrompt";
 
 export const useAiApiPromptJson = () => {
   const prompt = useAiApiPrompt();
@@ -7,8 +7,12 @@ export const useAiApiPromptJson = () => {
   return useMemo(
     () =>
       prompt
-        ? async (system: string, user: string) =>
-            prompt(system, user, "```json", "```")
+        ? (
+            system: string,
+            user: string,
+            online?: boolean,
+          ): Promise<AiApiResponse> =>
+            prompt(system, user, "```json", "```", online)
         : undefined,
     [prompt],
   );

@@ -1,7 +1,13 @@
 import { notNull } from "@dwidge/utils-js";
 import { useMemo } from "react";
-import { toString } from "./toString";
 import { useAiApiGet } from "./AiApiContext";
+import { toString } from "./toString";
+
+export interface AiApiResponse {
+  text: string;
+  sources?: { url: string; title?: string }[];
+  suggestions?: string[];
+}
 
 export const useAiApiPrompt = () => {
   const config = useAiApiGet();
@@ -15,15 +21,22 @@ export const useAiApiPrompt = () => {
             user: string,
             assistant?: string,
             stop?: string,
-          ) => {
+            online?: boolean,
+          ): Promise<AiApiResponse> => {
             if (
               maxInputCharacters != null &&
               system.length + user.length > maxInputCharacters
             ) {
               throw new Error(
-                `useAiApiE1: Input text length (${system.length + user.length}) exceeds maximum allowed characters (${maxInputCharacters}).`,
+                `useAiApiE1: Input text length (${
+                  system.length + user.length
+                }) exceeds maximum allowed characters (${maxInputCharacters}).`,
               );
             }
+
+            const tools = online
+              ? [{ type: "function", function: { name: "search" } }]
+              : undefined;
 
             try {
               const response = await fetch(`${apiUrl}/chat/completions`, {
@@ -45,6 +58,10 @@ export const useAiApiPrompt = () => {
                     max_tokens: maxOutputTokens,
                   }),
                   ...(stop && { stop }),
+                  ...(online && {
+                    tool_choice: "auto",
+                    tools,
+                  }),
                 }),
               });
 
@@ -70,9 +87,42 @@ export const useAiApiPrompt = () => {
               }
 
               const responseData = await response.json();
-              const messageContent =
-                responseData.choices?.[0]?.message?.content;
-              return toString(messageContent);
+              const message = responseData.choices?.[0]?.message;
+              const messageContent = message?.content;
+              const text = toString(messageContent ?? "");
+
+              const toolCalls = message?.tool_calls;
+              let sources: AiApiResponse["sources"];
+              let suggestions: AiApiResponse["suggestions"];
+
+              if (toolCalls) {
+                for (const toolCall of toolCalls) {
+                  if (
+                    toolCall.type === "function" &&
+                    toolCall.function.name === "search"
+                  ) {
+                    try {
+                      const args = JSON.parse(toolCall.function.arguments);
+                      if (args.results) {
+                        sources = args.results.map((r: any) => ({
+                          url: r.url,
+                          title: r.title,
+                        }));
+                      }
+                      if (args.search_suggestions) {
+                        suggestions = args.search_suggestions;
+                      }
+                    } catch (e) {
+                      console.error(
+                        "useAiApiE4: Failed to parse tool call arguments",
+                        e,
+                      );
+                    }
+                  }
+                }
+              }
+
+              return { text, sources, suggestions };
             } catch (error) {
               throw new Error("useAiApiE3: Request failed", { cause: error });
             }

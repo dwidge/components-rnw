@@ -1,11 +1,12 @@
 import { useAsyncState, useStringNull } from "@dwidge/hooks-react";
 import { FC, useState } from "react";
+import { Linking } from "react-native";
 import { StringInput } from "../StringInput";
 import { StyledButton } from "../StyledButton";
 import { StyledText } from "../StyledText";
 import { StyledView } from "../StyledView";
 import { stripHtmlJunk } from "./stripHtmlJunk";
-import { useAiApiPrompt } from "./useAiApiPrompt";
+import { AiApiResponse, useAiApiPrompt } from "./useAiApiPrompt";
 import { useAiApiPromptJson } from "./useAiApiPromptJson";
 
 export const AiPlayground: FC = () => {
@@ -13,25 +14,31 @@ export const AiPlayground: FC = () => {
   const aiApiJson = useAiApiPromptJson();
   const [userMessage, setUserMessage] = useAsyncState<string | null>("");
   const [systemPrompt, setSystemPrompt] = useAsyncState<string | null>("");
-  const [aiResponse, setAiResponse] = useState<string | null>("");
+  const [aiResponse, setAiResponse] = useState<AiApiResponse | null>(null);
   const [aiError, setAiError] = useState<string | null>(null);
+  const [online, setOnline] = useState(false);
 
-  const handleTestAi = async (api = aiApi) => {
-    setAiError(null);
-
-    if (!api || !aiApi) {
-      setAiError("AI API configuration is incomplete.");
-      setAiResponse(null);
-      return;
-    }
-
+  const handleTestAi = async (json = false) => {
     setAiError(null);
     setAiResponse(null);
+
+    if ((json && !aiApiJson) || (!json && !aiApi)) {
+      setAiError("AI API configuration is incomplete.");
+      return;
+    }
 
     if (!userMessage) return;
 
     try {
-      const response = await api(systemPrompt || "", userMessage || "");
+      const response = json
+        ? await aiApiJson!(systemPrompt || "", userMessage || "", online)
+        : await aiApi!(
+            systemPrompt || "",
+            userMessage || "",
+            undefined,
+            undefined,
+            online,
+          );
       setAiResponse(response);
     } catch (error: any) {
       console.error("AI Test Error:", error.message, JSON.stringify(error));
@@ -39,7 +46,6 @@ export const AiPlayground: FC = () => {
         error.cause?.error || error.message || "Failed to get AI response.",
       );
       setAiResponse(null);
-    } finally {
     }
   };
 
@@ -53,7 +59,7 @@ export const AiPlayground: FC = () => {
   const inputCharacterCount =
     (systemPrompt ? systemPrompt.length : 0) +
     (userMessage ? userMessage.length : 0);
-  const outputCharacterCount = aiResponse ? aiResponse.length : 0;
+  const outputCharacterCount = aiResponse?.text ? aiResponse.text.length : 0;
 
   return (
     <StyledView sgap pad outline>
@@ -72,19 +78,45 @@ export const AiPlayground: FC = () => {
       <StyledText right>Characters: {inputCharacterCount}</StyledText>
 
       <StyledView row gap>
-        <StyledButton onPress={() => handleTestAi(aiApi)}>Send</StyledButton>
-        <StyledButton onPress={() => handleTestAi(aiApiJson)}>
-          Json
-        </StyledButton>
+        <StyledButton onPress={() => handleTestAi()}>Send</StyledButton>
+        <StyledButton onPress={() => handleTestAi(true)}>Json</StyledButton>
         <StyledButton onPress={handleStripInput}>Strip</StyledButton>
+        <StyledButton
+          onPress={() => setOnline((o) => !o)}
+          icon={online ? "checkbox" : "square-outline"}
+        >
+          Online
+        </StyledButton>
       </StyledView>
 
       {(aiResponse || aiError) && (
         <StyledView>
           <StyledText numberOfLines={2000} error={!!aiError}>
-            {aiResponse || aiError}
+            {aiResponse?.text || aiError}
           </StyledText>
-          {!aiError && (
+          {aiResponse?.sources && aiResponse.sources.length > 0 && (
+            <StyledView gap>
+              <StyledText>Sources:</StyledText>
+              {aiResponse.sources.map((source, index) => (
+                <StyledText
+                  key={index}
+                  onPress={() => Linking.openURL(source.url)}
+                  style={{ color: "blue", textDecorationLine: "underline" }}
+                >
+                  {index + 1}. {source.title || source.url}
+                </StyledText>
+              ))}
+            </StyledView>
+          )}
+          {aiResponse?.suggestions && aiResponse.suggestions.length > 0 && (
+            <StyledView gap>
+              <StyledText>Suggestions:</StyledText>
+              {aiResponse.suggestions.map((suggestion, index) => (
+                <StyledText key={index}>- {suggestion}</StyledText>
+              ))}
+            </StyledView>
+          )}
+          {!aiError && aiResponse?.text && (
             <StyledText>Characters: {outputCharacterCount}</StyledText>
           )}
         </StyledView>
