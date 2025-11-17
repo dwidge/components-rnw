@@ -1,11 +1,10 @@
 import { useAsyncState, useStringNull } from "@dwidge/hooks-react";
-import { WebView } from "@dwidge/react-native-web-webview";
 import { FC, useState } from "react";
-import { Linking } from "react-native";
 import { StringInput } from "../StringInput";
 import { StyledButton } from "../StyledButton";
 import { StyledText } from "../StyledText";
 import { StyledView } from "../StyledView";
+import { AiSourcesList, AiSuggestions } from "./AiResponseViews";
 import { stripHtmlJunk } from "./stripHtmlJunk";
 import { AiApiResponse, useAiApiPrompt } from "./useAiApiPrompt";
 import { useAiApiPromptJson } from "./useAiApiPromptJson";
@@ -98,45 +97,11 @@ export const AiPlayground: FC = () => {
           {!aiError && aiResponse?.text && (
             <StyledText right>Characters: {outputCharacterCount}</StyledText>
           )}
-          {aiResponse?.sources && aiResponse.sources.length > 0 && (
-            <StyledView sgap>
-              <StyledText h4>Sources</StyledText>
-              {aiResponse.sources.map((source, index) => (
-                <StyledText
-                  key={index}
-                  onPress={() => Linking.openURL(source.url)}
-                  style={{ textDecorationLine: "underline" }}
-                >
-                  {index + 1}. {source.title || source.url}
-                </StyledText>
-              ))}
-            </StyledView>
-          )}
-          {aiResponse?.suggestions && aiResponse.suggestions.length > 0 && (
-            <StyledView sgap>
-              <StyledText h4>Suggestions</StyledText>
-              {aiResponse.suggestions.map((suggestion, index) => (
-                <StyledText key={index}>- {suggestion}</StyledText>
-              ))}
-            </StyledView>
-          )}
-          {aiResponse?.suggestionsHtml && (
-            <StyledView sgap>
-              <StyledText h4>Suggestions</StyledText>
-              <WebView
-                originWhitelist={["*"]}
-                source={{ html: aiResponse.suggestionsHtml }}
-                style={{ height: 60 }}
-                onShouldStartLoadWithRequest={(event) => {
-                  if (event.navigationType === "click") {
-                    Linking.openURL(event.url);
-                    return false;
-                  }
-                  return true;
-                }}
-              />
-            </StyledView>
-          )}
+          <AiSourcesList sources={aiResponse?.sources} />
+          <AiSuggestions
+            suggestions={aiResponse?.suggestions}
+            suggestionsHtml={aiResponse?.suggestionsHtml}
+          />
         </StyledView>
       )}
     </StyledView>
