@@ -1,6 +1,7 @@
 import { useAsyncState, useStringNull } from "@dwidge/hooks-react";
 import { FC, useState } from "react";
 import { Linking } from "react-native";
+import { WebView } from "react-native-webview";
 import { StringInput } from "../StringInput";
 import { StyledButton } from "../StyledButton";
 import { StyledText } from "../StyledText";
@@ -114,6 +115,23 @@ export const AiPlayground: FC = () => {
               {aiResponse.suggestions.map((suggestion, index) => (
                 <StyledText key={index}>- {suggestion}</StyledText>
               ))}
+            </StyledView>
+          )}
+          {aiResponse?.suggestionsHtml && (
+            <StyledView gap>
+              <StyledText>Suggestions:</StyledText>
+              <WebView
+                originWhitelist={["*"]}
+                source={{ html: aiResponse.suggestionsHtml }}
+                style={{ height: 60 }}
+                onShouldStartLoadWithRequest={(event) => {
+                  if (event.navigationType === "click") {
+                    Linking.openURL(event.url);
+                    return false;
+                  }
+                  return true;
+                }}
+              />
             </StyledView>
           )}
           {!aiError && aiResponse?.text && (

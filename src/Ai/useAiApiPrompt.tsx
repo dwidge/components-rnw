@@ -7,6 +7,7 @@ export interface AiApiResponse {
   text: string;
   sources?: { url: string; title?: string }[];
   suggestions?: string[];
+  suggestionsHtml?: string;
 }
 
 const geminiNativePrompt = async (
@@ -82,15 +83,30 @@ const geminiNativePrompt = async (
         .join("") ?? "";
 
     let sources: AiApiResponse["sources"];
-    const citationSources = candidate?.citationMetadata?.citationSources;
-    if (citationSources) {
-      sources = citationSources.map((s: any) => ({
-        url: s.uri,
-        title: s.uri,
-      }));
+    let suggestionsHtml: string | undefined;
+
+    const groundingMetadata = candidate?.groundingMetadata;
+    if (groundingMetadata) {
+      if (groundingMetadata.groundingChunks) {
+        sources = groundingMetadata.groundingChunks.map((chunk: any) => ({
+          url: chunk.web.uri,
+          title: chunk.web.title,
+        }));
+      }
+      if (groundingMetadata.searchEntryPoint?.renderedContent) {
+        suggestionsHtml = groundingMetadata.searchEntryPoint.renderedContent;
+      }
+    } else {
+      const citationSources = candidate?.citationMetadata?.citationSources;
+      if (citationSources) {
+        sources = citationSources.map((s: any) => ({
+          url: s.uri,
+          title: s.uri,
+        }));
+      }
     }
 
-    return { text, sources, suggestions: undefined };
+    return { text, sources, suggestions: undefined, suggestionsHtml };
   } catch (error) {
     throw new Error("useAiApiE7: Gemini request failed", { cause: error });
   }
