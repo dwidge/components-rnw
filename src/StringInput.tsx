@@ -8,6 +8,7 @@ import {
   useOptimisticState,
 } from "@dwidge/hooks-react";
 import { Input, InputProps } from "@rneui/themed";
+import { startTransition, useOptimistic } from "react";
 import { StyleProp, TextStyle } from "react-native";
 
 export const StringInput = ({
@@ -19,9 +20,14 @@ export const StringInput = ({
   secureTextEntry = false,
   ...props
 }: Omit<InputProps, "value"> & { value: AsyncState<string> }) => {
-  const [optimisticValue, setOptimisticValue] = useOptimisticState(
-    [value, setValue],
-    "",
+  const [, setOptimisticValue] = useOptimisticState([value, setValue], "");
+  const [optimisticValue, setOptimisticInternal] = useOptimistic(
+    value,
+    (currentOptimisticState, action) => {
+      return typeof action === "function"
+        ? action(currentOptimisticState ?? "")
+        : action;
+    },
   );
 
   return (
@@ -30,7 +36,14 @@ export const StringInput = ({
       label={label}
       renderErrorMessage={false}
       value={optimisticValue}
-      onChangeText={setOptimisticValue}
+      onChangeText={
+        setOptimisticValue
+          ? (v) => {
+              startTransition(() => setOptimisticInternal(v));
+              setOptimisticValue(v);
+            }
+          : undefined
+      }
       placeholder={placeholder}
       numberOfLines={numberOfLines}
       multiline={numberOfLines > 1}
