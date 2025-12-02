@@ -25,6 +25,7 @@ const geminiNativePrompt = async (
   stop: string | undefined,
   online: boolean | undefined,
   config: AiApi,
+  image: string | undefined,
 ): Promise<AiApiResponse> => {
   const { apiUrl, apiKey, model, maxOutputTokens } = config;
 
@@ -32,8 +33,20 @@ const geminiNativePrompt = async (
     throw new Error("useAiApiE5: Gemini API configuration is incomplete.");
   }
 
+  const userParts: any[] = image
+    ? [
+        { text: user },
+        {
+          inline_data: {
+            mime_type: image.substring(5, image.indexOf(";")),
+            data: image.substring(image.indexOf(",") + 1),
+          },
+        },
+      ]
+    : [{ text: user }];
+
   const contents = [
-    { role: "user", parts: [{ text: user }] },
+    { role: "user", parts: userParts },
     assistant ? { role: "model", parts: [{ text: assistant }] } : undefined,
   ].filter(notNull);
 
@@ -131,6 +144,7 @@ export const useAiApiPrompt = () => {
             assistant?: string,
             stop?: string,
             online?: boolean,
+            image?: string,
           ): Promise<AiApiResponse> => {
             if (
               maxInputCharacters != null &&
@@ -154,6 +168,7 @@ export const useAiApiPrompt = () => {
                 stop,
                 online,
                 config,
+                image,
               );
             }
 
@@ -173,7 +188,18 @@ export const useAiApiPrompt = () => {
                     model,
                     messages: [
                       { role: "system", content: system },
-                      { role: "user", content: user },
+                      {
+                        role: "user",
+                        content: image
+                          ? [
+                              { type: "text", text: user },
+                              {
+                                type: "image_url",
+                                image_url: { url: image },
+                              },
+                            ]
+                          : user,
+                      },
                       assistant
                         ? { role: "assistant", content: assistant }
                         : undefined,
