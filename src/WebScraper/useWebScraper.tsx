@@ -1,0 +1,119 @@
+import { useMemo } from "react";
+import { retryWithBackoff } from "../Ai/retryWithBackoff";
+import { useWebScraperApiGet } from "./WebScraperApiContext";
+
+/**
+ * The response from a successful web scraping request.
+ */
+export interface WebScraperResponse {
+  /** The main text content extracted from the URL. */
+  text: string;
+}
+
+const isScraperApiErrorRetryable = (error: any): boolean => {
+  const status =
+    error instanceof Error && (error.cause as { status?: number })?.status;
+  const isNetworkError = typeof status !== "number";
+  return isNetworkError || [429, 502, 503, 504].includes(status);
+};
+
+/**
+ * A hook that provides a function to scrape text content from a URL using the configured API.
+ * The hook abstracts the implementation details of different web scraping providers.
+ *
+ * @returns A function to call for scraping, or `undefined` if the API is not configured.
+ * The function takes a URL string and returns a promise that resolves to a `WebScraperResponse`.
+ */
+export const useWebScraper = () => {
+  const config = useWebScraperApiGet();
+  const { provider, apiUrl, apiKey } = config;
+
+  return useMemo(
+    () =>
+      provider && apiUrl && apiKey
+        ? async (url: string): Promise<WebScraperResponse> => {
+            let requestUrl: string;
+            const fetchOptions: RequestInit = {
+              method: "GET",
+              headers: {},
+            };
+
+            switch (provider) {
+              case "extractorapi":
+                requestUrl = `${apiUrl}?apikey=${apiKey}&url=${encodeURIComponent(url)}`;
+                break;
+              case "urltotext":
+                requestUrl = `${apiUrl}?token=${apiKey}&url=${encodeURIComponent(url)}`;
+                break;
+              case "apimarket":
+                requestUrl = apiUrl;
+                fetchOptions.method = "POST";
+                (fetchOptions.headers as Record<string, string>)[
+                  "Content-Type"
+                ] = "application/json";
+                (fetchOptions.headers as Record<string, string>)[
+                  "Authorization"
+                ] = `Bearer ${apiKey}`;
+                fetchOptions.body = JSON.stringify({ url });
+                break;
+              case "custom":
+              default:
+                requestUrl = apiUrl;
+                fetchOptions.method = "POST";
+                (fetchOptions.headers as Record<string, string>)[
+                  "Content-Type"
+                ] = "application/json";
+                (fetchOptions.headers as Record<string, string>)[
+                  "Authorization"
+                ] = `Bearer ${apiKey}`;
+                fetchOptions.body = JSON.stringify({ url });
+                break;
+            }
+
+            const response = await retryWithBackoff(
+              () => fetch(requestUrl, fetchOptions),
+              { isRetryableError: isScraperApiErrorRetryable },
+            );
+
+            if (!response.ok) {
+              const errorData = await response.text();
+              console.error(
+                "useWebScraperE1",
+                {
+                  error: `API Error: ${response.status} - ${response.statusText}`,
+                  details: errorData,
+                },
+                response,
+              );
+              throw new Error(
+                `useWebScraperE1: Request failed: ${response.statusText}`,
+                {
+                  cause: {
+                    error: `API Error: ${response.status} - ${response.statusText}`,
+                    details: errorData,
+                    status: response.status,
+                  },
+                },
+              );
+            }
+
+            const responseData = await response.json();
+
+            const text =
+              responseData.text ||
+              responseData.content ||
+              responseData.data?.text ||
+              "";
+
+            if (typeof text !== "string") {
+              throw new Error(
+                "useWebScraperE2: Invalid response format, text content not found.",
+              );
+            }
+
+            return { text };
+          }
+        : undefined,
+    [provider, apiUrl, apiKey],
+  );
+};
