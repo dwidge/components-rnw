@@ -1,5 +1,6 @@
 import {
   AsyncState,
+  useBoolNull,
   useField,
   useNonNullable,
   useStringNull,
@@ -8,6 +9,7 @@ import { FC } from "react";
 import { StringInput } from "../StringInput";
 import { StyledButton } from "../StyledButton";
 import { StyledView } from "../StyledView";
+import { SwitchButton } from "../SwitchButton";
 import {
   defaultWebScraperConfig,
   useWebScraperApiConfig,
@@ -49,6 +51,11 @@ export const WebScraperApiConfigForm = ({
       label="API Key"
       value={useStringNull(useField(value, "apiKey", null))}
       placeholder="API Key"
+    />
+    <SwitchButton
+      label="Render JavaScript"
+      value={useBoolNull(useField(value, "renderJs", false))}
+      options={[false, true]}
     />
   </>
 );

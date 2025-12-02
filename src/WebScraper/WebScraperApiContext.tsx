@@ -21,6 +21,8 @@ export interface WebScraperApi {
   apiUrl: string | null;
   /** The API key for authentication. */
   apiKey: string | null;
+  /** Whether to render JavaScript on the page. */
+  renderJs: boolean | null;
 }
 
 /**
@@ -30,6 +32,7 @@ export const defaultWebScraperConfig: WebScraperApi = {
   provider: "extractorapi",
   apiUrl: "https://api.extractorapi.com/v1/extractor",
   apiKey: null,
+  renderJs: false,
 };
 
 /**

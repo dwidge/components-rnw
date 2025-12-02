@@ -64,7 +64,7 @@ export const WebScraperPlayground: FC = () => {
 
       {(response || error) && (
         <StyledView gap>
-          <StyledText h4 error={!!error} selectable>
+          <StyledText error={!!error} selectable>
             {response?.text || error}
           </StyledText>
           {!error && response?.text && (

@@ -26,7 +26,7 @@ const isScraperApiErrorRetryable = (error: any): boolean => {
  */
 export const useWebScraper = () => {
   const config = useWebScraperApiGet();
-  const { provider, apiUrl, apiKey } = config;
+  const { provider, apiUrl, apiKey, renderJs } = config;
 
   return useMemo(
     () =>
@@ -40,22 +40,22 @@ export const useWebScraper = () => {
 
             switch (provider) {
               case "extractorapi":
-                requestUrl = `${apiUrl}?apikey=${apiKey}&url=${encodeURIComponent(url)}`;
+                requestUrl = `${apiUrl}?apikey=${apiKey}&url=${encodeURIComponent(
+                  url,
+                )}`;
+                if (renderJs) {
+                  requestUrl += "&render=true";
+                }
                 break;
               case "urltotext":
-                requestUrl = `${apiUrl}?token=${apiKey}&url=${encodeURIComponent(url)}`;
+                requestUrl = `${apiUrl}?token=${apiKey}&url=${encodeURIComponent(
+                  url,
+                )}`;
+                if (renderJs) {
+                  requestUrl += "&js=true";
+                }
                 break;
               case "apimarket":
-                requestUrl = apiUrl;
-                fetchOptions.method = "POST";
-                (fetchOptions.headers as Record<string, string>)[
-                  "Content-Type"
-                ] = "application/json";
-                (fetchOptions.headers as Record<string, string>)[
-                  "Authorization"
-                ] = `Bearer ${apiKey}`;
-                fetchOptions.body = JSON.stringify({ url });
-                break;
               case "custom":
               default:
                 requestUrl = apiUrl;
@@ -66,7 +66,11 @@ export const useWebScraper = () => {
                 (fetchOptions.headers as Record<string, string>)[
                   "Authorization"
                 ] = `Bearer ${apiKey}`;
-                fetchOptions.body = JSON.stringify({ url });
+                const body: { url: string; render_js?: boolean } = { url };
+                if (renderJs) {
+                  body.render_js = true;
+                }
+                fetchOptions.body = JSON.stringify(body);
                 break;
             }
 
@@ -114,6 +118,6 @@ export const useWebScraper = () => {
             return { text };
           }
         : undefined,
-    [provider, apiUrl, apiKey],
+    [provider, apiUrl, apiKey, renderJs],
   );
 };
