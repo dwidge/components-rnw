@@ -38,10 +38,7 @@ export const WebScraperApiConfigForm = ({
   value: AsyncState<WebScraperApi>;
 }) => (
   <>
-    <PresetButtons
-      provider={useField(value, "provider", null)}
-      apiUrl={useField(value, "apiUrl", null)}
-    />
+    <PresetButtons value={value} />
     <StringInput
       label="API URL"
       value={useStringNull(useField(value, "apiUrl", null))}
@@ -61,11 +58,9 @@ export const WebScraperApiConfigForm = ({
 );
 
 const PresetButtons = ({
-  provider: [, setProvider],
-  apiUrl: [, setApiUrl],
+  value: [, setConfig],
 }: {
-  provider: AsyncState<WebScraperProvider | null>;
-  apiUrl: AsyncState<string | null>;
+  value: AsyncState<WebScraperApi>;
 }) => {
   const presets: {
     label: string;
@@ -75,12 +70,12 @@ const PresetButtons = ({
     {
       label: "ExtractorAPI",
       provider: "extractorapi",
-      url: "https://api.extractorapi.com/v1/extractor",
+      url: "https://extractorapi.com/api/v1/extractor/",
     },
     {
       label: "URLToText",
       provider: "urltotext",
-      url: "https://urltotext.com/api/scrape",
+      url: "https://urltotext.com/api/v1/urltotext/",
     },
     {
       label: "API.market",
@@ -90,10 +85,9 @@ const PresetButtons = ({
   ];
 
   const handlePresetClick = (provider: WebScraperProvider, url: string) =>
-    setProvider && setApiUrl
+    setConfig
       ? () => {
-          setProvider(provider);
-          setApiUrl(url);
+          setConfig((c) => ({ ...c, provider, apiUrl: url }));
         }
       : undefined;
 
