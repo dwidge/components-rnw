@@ -12,7 +12,8 @@ export interface WebScraperResponse {
 
 const isScraperApiErrorRetryable = (error: any): boolean => {
   const status =
-    error instanceof Error && (error.cause as { status?: number })?.status;
+    error instanceof Error &&
+    (error.cause as { error?: Error; status?: number })?.status;
   const isNetworkError = typeof status !== "number";
   return isNetworkError || [429, 502, 503, 504].includes(status);
 };
@@ -74,34 +75,35 @@ export const useWebScraper = () => {
                 break;
             }
 
-            const response = await retryWithBackoff(
-              () => fetch(requestUrl, fetchOptions),
-              { isRetryableError: isScraperApiErrorRetryable },
-            );
-
-            if (!response.ok) {
-              const errorData = await response.text();
-              console.error(
-                "useWebScraperE1",
-                {
-                  error: `API Error: ${response.status} - ${response.statusText}`,
-                  details: errorData,
+            const scraperFetch = async () => {
+              const response = await fetch(requestUrl, fetchOptions).catch(
+                (networkError) => {
+                  throw new Error("Network request failed", {
+                    cause: { error: networkError },
+                  });
                 },
-                response,
               );
-              throw new Error(
-                `useWebScraperE1: Request failed: ${response.statusText}`,
-                {
-                  cause: {
-                    error: `API Error: ${response.status} - ${response.statusText}`,
-                    details: errorData,
-                    status: response.status,
+
+              if (!response.ok) {
+                const errorData = await response.text();
+                throw new Error(
+                  `useWebScraperE1: Request failed: ${response.statusText}`,
+                  {
+                    cause: {
+                      error: `API Error: ${response.status} - ${response.statusText}`,
+                      details: errorData,
+                      status: response.status,
+                    },
                   },
-                },
-              );
-            }
+                );
+              }
 
-            const responseData = await response.json();
+              return response.json();
+            };
+
+            const responseData = await retryWithBackoff(scraperFetch, {
+              isRetryableError: isScraperApiErrorRetryable,
+            });
 
             const text =
               responseData.text ||
