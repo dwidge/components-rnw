@@ -48,14 +48,24 @@ export const useWebScraper = () => {
                   requestUrl += "&render=true";
                 }
                 break;
-              case "urltotext":
-                requestUrl = `${apiUrl}?token=${apiKey}&url=${encodeURIComponent(
+              case "urltotext": {
+                requestUrl = apiUrl;
+                fetchOptions.method = "POST";
+                (fetchOptions.headers as Record<string, string>)[
+                  "Authorization"
+                ] = `Token ${apiKey}`;
+                (fetchOptions.headers as Record<string, string>)[
+                  "Content-Type"
+                ] = "application/json";
+                const body: { url: string; render_javascript?: boolean } = {
                   url,
-                )}`;
+                };
                 if (renderJs) {
-                  requestUrl += "&js=true";
+                  body.render_javascript = true;
                 }
+                fetchOptions.body = JSON.stringify(body);
                 break;
+              }
               case "apimarket":
               case "custom":
               default:
@@ -109,6 +119,7 @@ export const useWebScraper = () => {
               responseData.text ||
               responseData.content ||
               responseData.data?.text ||
+              responseData.data?.content ||
               "";
 
             if (typeof text !== "string") {
