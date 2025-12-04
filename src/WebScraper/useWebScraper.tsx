@@ -67,6 +67,12 @@ export const useWebScraper = () => {
                 break;
               }
               case "apimarket":
+                requestUrl = `${apiUrl}?url=${encodeURIComponent(url)}`;
+                fetchOptions.method = "GET";
+                (fetchOptions.headers as Record<string, string>)[
+                  "x-magicapi-key"
+                ] = apiKey;
+                break;
               case "custom":
               default:
                 requestUrl = apiUrl;
@@ -120,6 +126,7 @@ export const useWebScraper = () => {
               responseData.content ||
               responseData.data?.text ||
               responseData.data?.content ||
+              responseData.main_text ||
               "";
 
             if (typeof text !== "string") {

@@ -80,7 +80,7 @@ const PresetButtons = ({
     {
       label: "API.market",
       provider: "apimarket",
-      url: "https://api.market/v1/web/scrape",
+      url: "https://prod.api.market/api/v1/apileague/extract-content/extract-content",
     },
   ];
 
