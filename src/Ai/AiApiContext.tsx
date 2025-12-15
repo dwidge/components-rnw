@@ -25,3 +25,5 @@ export const useAiApiConfig = () => useContext(AiApiContext);
 
 export const useAiApiGet = () => useAiApiConfig()[0] ?? defaultConfig;
 export const useAiApiSet = () => useAiApiConfig()[1];
+
+export const useAiIsConfigured = () => !!useAiApiConfig()[0]?.apiKey;
