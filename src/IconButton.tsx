@@ -19,6 +19,7 @@ export type IconButtonProps = {
   color?: ColorValue;
   disabledColor?: ColorValue;
   style?: StyleProp<ViewStyle>;
+  testID?: string;
 } & PropsWithChildren;
 
 export const IconButton = withTheme(
