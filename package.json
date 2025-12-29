@@ -1,6 +1,6 @@
 {
   "name": "@dwidge/components-rnw",
-  "version": "0.0.43",
+  "version": "0.0.44",
   "description": "A collection of reusable React Native Web components.",
   "repository": {
     "type": "git",
